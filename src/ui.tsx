@@ -15,12 +15,12 @@ import {
   isUsableAsSlug,
   setField,
   STEP_LABELS,
-  STEP_ORDER,
+  stepOrder,
   toInput,
 } from './flow.ts';
 
 import type { AppInput } from './derive.ts';
-import type { FlowState, StepId } from './flow.ts';
+import type { FlowState } from './flow.ts';
 
 const colors = {
   active: '#FBBF24',
@@ -33,11 +33,12 @@ const colors = {
   text: '#F8FAFC',
 } as const;
 
-function StepRail({ step }: { step: StepId }) {
-  const current = STEP_ORDER.indexOf(step);
+function StepRail({ state }: { state: FlowState }) {
+  const order = stepOrder(state);
+  const current = order.indexOf(state.step);
   return (
     <Text>
-      {STEP_ORDER.map((id, index) => (
+      {order.map((id, index) => (
         <Text
           color={
             index === current ? colors.activeSoft : index < current ? colors.doneSoft : colors.muted
@@ -81,7 +82,7 @@ function Summary({ state }: { state: FlowState }) {
       <Text color={colors.doneSoft}>{'  Ready to create'}</Text>
       <Box flexDirection="column" marginTop={1}>
         <Row label="name" value={fields.name} />
-        <Row label="displayName" value={fields.displayName || `(same as name)`} />
+        <Row label="home screen" value={fields.displayName || `${fields.name}  (same as name)`} />
         <Row
           label="scheme"
           value={`${fields.scheme.development} / ${fields.scheme.preview} / ${fields.scheme.production}`}
@@ -127,7 +128,7 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
 
   return (
     <Box flexDirection="column" marginTop={1} paddingLeft={2}>
-      <StepRail step={state.step} />
+      <StepRail state={state} />
       <Box marginTop={1} />
 
       {state.step === 'name' ? (
@@ -146,9 +147,17 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
         />
       ) : null}
 
+      {state.step === 'display' ? (
+        <Field
+          hint={`Optional — Enter to keep "${state.name}". Set it to control casing/spacing (e.g. Gym Log)`}
+          label="Home screen name"
+          value={state.display}
+        />
+      ) : null}
+
       {state.step === 'team' ? (
         <Field
-          hint="Optional — press Enter to skip and use Xcode automatic signing"
+          hint="Optional, iOS only — Enter to skip and use Xcode automatic signing. Android needs nothing here."
           label="Apple Team ID"
           value={state.appleTeamId}
         />
@@ -164,7 +173,9 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
             ? '  Enter create · Esc cancel'
             : state.step === 'name' && isUsableAsSlug(state.name)
               ? '  Enter continue (slug: reuses this name) · Esc cancel'
-              : '  Enter continue · Esc cancel'}
+              : state.step === 'display' || state.step === 'team'
+                ? '  Enter skip or continue · Esc cancel'
+                : '  Enter continue · Esc cancel'}
         </Text>
       </Box>
     </Box>
