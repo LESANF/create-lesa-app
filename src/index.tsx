@@ -14,11 +14,11 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import React, { useState } from 'react';
 
-import { createApp } from './create.ts';
+import { createApp, CREATE_STEPS } from './create.ts';
 import { Intro } from './intro.tsx';
-import { Frame, Prompt, railColors as colors, Section } from './ui.tsx';
+import { Frame, Prompt, railColors as colors, Section, Steps } from './ui.tsx';
 
-import type { CreateResult } from './create.ts';
+import type { CreateProgress, CreateResult } from './create.ts';
 import type { PromptResult } from './ui.tsx';
 
 function parseArgs(argv: string[]) {
@@ -53,7 +53,7 @@ function resolveTemplateDir(explicit: string): string {
 
 type Stage =
   | { kind: 'input' }
-  | { kind: 'working'; step: string }
+  | { kind: 'working'; progress: CreateProgress; skipped: number[] }
   | { kind: 'done'; result: CreateResult };
 
 function App({ targetDir, templateDir }: { targetDir: string; templateDir: string }) {
@@ -61,10 +61,21 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
   const [error, setError] = useState<string | null>(null);
 
   const onDone = (input: PromptResult) => {
-    setStage({ kind: 'working', step: 'starting' });
+    setStage({ kind: 'working', progress: { index: 0 }, skipped: [] });
     void createApp({
       ...input,
-      onStep: step => setStage({ kind: 'working', step }),
+      onStep: progress =>
+        setStage(previous => ({
+          kind: 'working',
+          progress,
+          // 건너뛴 단계는 누적한다 — 다음 단계로 넘어가도 표시가 남아야 한다.
+          skipped:
+            previous.kind === 'working' && progress.skipped
+              ? [...new Set([...previous.skipped, progress.index])]
+              : previous.kind === 'working'
+                ? previous.skipped
+                : [],
+        })),
       targetDir,
       templateDir,
     })
@@ -85,8 +96,17 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
           </Section>
         </Frame>
       ) : stage.kind === 'working' ? (
-        <Frame footer="Working…">
-          <Section color={colors.accent} marker="◆" title={stage.step} />
+        <Frame footer={`Creating ${path.basename(targetDir)}…`}>
+          <Steps
+            current={stage.progress.index}
+            labels={CREATE_STEPS}
+            progress={
+              stage.progress.total
+                ? { done: stage.progress.done ?? 0, total: stage.progress.total }
+                : undefined
+            }
+            skipped={new Set(stage.skipped)}
+          />
         </Frame>
       ) : stage.kind === 'done' ? (
         <Frame footer="Done">
@@ -94,6 +114,16 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
             color={colors.done}
             marker="◆"
             title={`Created ${path.basename(stage.result.targetDir)}`}
+          />
+          <Steps
+            current={CREATE_STEPS.length}
+            details={{
+              0: `${stage.result.receipt.fileCount} files`,
+              1: 'identity substituted',
+              3: '1 commit',
+            }}
+            labels={CREATE_STEPS}
+            skipped={new Set(stage.result.receipt.wroteEnvFile ? [] : [2])}
           />
           <Section color={colors.done} marker="◇" title="Next steps">
             {stage.result.nextSteps.map(step => (

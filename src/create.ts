@@ -16,17 +16,37 @@ import type { AppInput } from './derive.ts';
 
 const run = promisify(execFile);
 
+/** 진행 표시용 단계 이름 — UI 가 이 순서대로 목록을 그린다. */
+export const CREATE_STEPS = [
+  'Copy template',
+  'Apply env-candidates.ts',
+  'Write .env',
+  'Git init',
+] as const;
+
+export type CreateProgress = {
+  /** `CREATE_STEPS` 안의 위치. */
+  index: number;
+  /** 이 단계가 건너뛰어졌는지(예: Team ID 를 안 받으면 `.env` 를 안 만든다). */
+  skipped?: boolean;
+  /** 파일 복사처럼 셀 수 있는 단계의 진행률. */
+  done?: number;
+  total?: number;
+};
+
 export type CreateOptions = AppInput & {
   templateDir: string;
   targetDir: string;
-  /** 진행 로그. ink 쪽에서는 상태 업데이트로 바꿔 넘긴다. */
-  onStep?: (message: string) => void;
+  /** 진행 상황. ink 쪽에서는 상태 업데이트로 바꿔 넘긴다. */
+  onStep?: (progress: CreateProgress) => void;
 };
 
 export type CreateResult = {
   targetDir: string;
   fields: ReturnType<typeof derive>;
   nextSteps: string[];
+  /** 끝난 뒤 무엇이 됐는지 보여주는 영수증 — 생성이 300ms 라 진행 표시는 스쳐 지나간다. */
+  receipt: { fileCount: number; wroteEnvFile: boolean };
 };
 
 async function gitInit(dir: string): Promise<void> {
@@ -57,21 +77,24 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
   const fields = derive({ displayName, slug });
 
   let copied = false;
+  let fileCount = 0;
   try {
-    step('copying template');
-    await copyTemplate(templateDir, targetDir);
+    step({ index: 0 });
+    await copyTemplate(templateDir, targetDir, (done, total) => {
+      fileCount = total;
+      step({ done, index: 0, total });
+    });
     copied = true;
 
-    step('applying env-candidates.ts');
+    step({ index: 1 });
     await applyEnvCandidates(targetDir, fields);
 
-    if (appleTeamId) {
-      step('writing .env');
-      await applyEnvFile(targetDir, appleTeamId);
-    }
+    step({ index: 2, skipped: !appleTeamId });
+    if (appleTeamId) await applyEnvFile(targetDir, appleTeamId);
 
-    step('git init');
+    step({ index: 3 });
     await gitInit(targetDir);
+    step({ index: CREATE_STEPS.length });
   } catch (error) {
     if (copied) {
       await rm(targetDir, { force: true, recursive: true }).catch(() => undefined);
@@ -82,6 +105,7 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
   const name = path.basename(targetDir);
   return {
     fields,
+    receipt: { fileCount, wroteEnvFile: Boolean(appleTeamId) },
     nextSteps: [
       `cd ${name} && pnpm install`,
       'pnpm ios:development   (or pnpm android:development)',

@@ -18,10 +18,13 @@ const colors = {
   done: '#2DD4BF',
   doneSoft: '#99F6E4',
   error: '#FB7185',
-  faint: '#475569',
-  muted: '#94A3B8',
-  rail: '#334155',
-  softText: '#CBD5E1',
+  /** 힌트·지시문. 종전 #475569 는 어두운 터미널에서 거의 안 보였다. */
+  faint: '#94A3B8',
+  muted: '#CBD5E1',
+  pending: '#64748B',
+  /** 세로선·테두리. 종전 #334155 는 배경에 묻혔다. */
+  rail: '#7C8DA6',
+  softText: '#E2E8F0',
   text: '#F8FAFC',
 } as const;
 
@@ -163,6 +166,70 @@ const PROMPTS: Record<string, { hint: (state: FlowState) => string; title: strin
 };
 
 export const railColors = colors;
+
+const BAR_WIDTH = 28;
+
+/** 채운 막대 + 개수. 총계를 모르면 막대를 안 그린다. */
+export function Progress({ done, total }: { done: number; total: number }) {
+  const filled = Math.round((done / total) * BAR_WIDTH);
+  return (
+    <Text>
+      {'  '}
+      <Text color={colors.done}>{'█'.repeat(filled)}</Text>
+      <Text color={colors.pending}>{'░'.repeat(BAR_WIDTH - filled)}</Text>
+      <Text color={colors.muted}>{`  ${done}/${total} files`}</Text>
+    </Text>
+  );
+}
+
+/** 생성 단계 목록 — 끝난 것·지금 것·남은 것을 한눈에 보여준다. */
+export function Steps({
+  current,
+  details,
+  labels,
+  progress,
+  skipped,
+}: {
+  current: number;
+  /** 끝난 단계 옆에 붙는 설명 — `216 files` 처럼. */
+  details?: Record<number, string>;
+  labels: readonly string[];
+  progress?: { done: number; total: number };
+  skipped: Set<number>;
+}) {
+  const width = Math.max(...labels.map(label => label.length)) + 2;
+  return (
+    <>
+      {labels.map((label, index) => {
+        const state =
+          skipped.has(index) ? 'skipped' : index < current ? 'done' : index === current ? 'now' : 'todo';
+        const color =
+          state === 'now' ? colors.accent : state === 'todo' ? colors.pending : colors.done;
+        return (
+          <React.Fragment key={label}>
+            {index === 0 ? <Text color={colors.rail}>{'\u00a0'}</Text> : null}
+            <Text>
+              <Text color={color}>
+                {`${state === 'now' ? '◆' : state === 'todo' ? '○' : state === 'skipped' ? '◌' : '◇'} `}
+              </Text>
+              <Text color={state === 'todo' ? colors.pending : colors.softText}>
+                {details?.[index] || state === 'skipped' ? label.padEnd(width) : label}
+              </Text>
+              {state === 'skipped' ? (
+                <Text color={colors.pending}>{'skipped'}</Text>
+              ) : details?.[index] ? (
+                <Text color={colors.faint}>{details[index]}</Text>
+              ) : null}
+            </Text>
+            {state === 'now' && progress ? (
+              <Progress done={progress.done} total={progress.total} />
+            ) : null}
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+}
 
 /** `┌ create-lesa-app` … `└ <footer>` 껍데기 — 프롬프트·진행·완료가 같은 모양을 쓴다. */
 export function Frame({ children, footer }: { children: React.ReactNode; footer: string }) {

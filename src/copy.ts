@@ -59,16 +59,23 @@ async function trackedFiles(templateDir: string): Promise<string[]> {
   }
 }
 
-export async function copyTemplate(templateDir: string, targetDir: string): Promise<void> {
+export async function copyTemplate(
+  templateDir: string,
+  targetDir: string,
+  /** 진행률 — 216개쯤 되므로 진행 표시가 의미가 있다. */
+  onFile?: (copied: number, total: number) => void
+): Promise<void> {
   await assertTemplate(templateDir);
   await assertEmptyTarget(targetDir);
 
   const files = await trackedFiles(templateDir);
   await mkdir(targetDir, { recursive: true });
 
+  let copied = 0;
   for (const rel of files) {
     const to = path.join(targetDir, rel);
     await mkdir(path.dirname(to), { recursive: true });
     await cp(path.join(templateDir, rel), to);
+    onFile?.(++copied, files.length);
   }
 }
