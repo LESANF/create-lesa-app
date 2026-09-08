@@ -106,15 +106,15 @@ function Summary({ state }: { state: FlowState }) {
   const fields = derive(toInput(state));
   const rows = [
     {
-      label: 'Home screen',
-      note: fields.displayName ? undefined : 'same as project name',
+      label: 'Display name',
+      note: fields.displayName ? 'under the app icon' : 'same as project name',
       value: fields.displayName || fields.name,
     },
-    { label: 'Project name', note: 'Xcode · Expo slug', value: fields.name },
+    { label: 'Project name', note: 'Xcode project · Expo slug', value: fields.name },
     { label: 'Version', note: undefined, value: '0.0.1 (build 1)' },
     {
       label: 'iOS signing',
-      note: undefined,
+      note: state.appleTeamId ? 'Apple Team ID' : undefined,
       value: state.appleTeamId || 'Xcode automatic',
     },
   ];
@@ -133,7 +133,7 @@ function Summary({ state }: { state: FlowState }) {
       ))}
       <Box marginTop={1} />
       <Text color={colors.faint}>
-        {`${''.padEnd(labelWidth)}${'URL scheme'.padEnd(schemeWidth)}Bundle ID · Android package`}
+        {`${''.padEnd(labelWidth)}${'URL scheme'.padEnd(schemeWidth)}iOS bundle ID · Android package`}
       </Text>
       {ENVS.map(env => (
         <Text color={colors.muted} key={env}>
@@ -148,12 +148,21 @@ function Summary({ state }: { state: FlowState }) {
 
 const PROMPTS: Record<string, { hint: (state: FlowState) => string; title: string }> = {
   display: {
-    hint: state => `optional · Enter keeps "${state.name}"`,
-    title: 'Name on the home screen',
+    hint: state => `Optional — Enter keeps "${state.name}". Set it to control casing and spacing`,
+    title: 'Display name',
   },
-  name: { hint: () => 'any language', title: 'App name' },
-  slug: { hint: () => 'lowercase letters, digits, hyphens', title: 'Slug' },
-  team: { hint: () => 'optional · iOS only · Enter to skip', title: 'Apple Team ID' },
+  name: {
+    hint: () => 'Any language. Lowercase ASCII doubles as the slug; anything else asks for one',
+    title: 'App name',
+  },
+  slug: {
+    hint: () => 'Lowercase, digits, hyphens — drives the Xcode project, schemes and bundle id',
+    title: 'Slug',
+  },
+  team: {
+    hint: () => 'Optional, iOS only — Enter to skip. Android needs nothing here',
+    title: 'Apple Team ID',
+  },
 };
 
 export const railColors = colors;
@@ -295,11 +304,13 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
           <Summary state={state} />
         ) : (
           <>
-            <Text>
-              {'  '}
-              <Text color={colors.text}>{state[field!]}</Text>
-              <Text color={state.error ? colors.error : colors.accent}>▌</Text>
-            </Text>
+            <Panel color={state.error ? colors.error : colors.accent} width={PANEL_WIDTH}>
+              <Text>
+                <Text color={colors.faint}>{'› '}</Text>
+                <Text color={colors.text}>{state[field!]}</Text>
+                <Text color={colors.accent}>▌</Text>
+              </Text>
+            </Panel>
             <Text color={colors.faint}>{`  ${prompt.hint(state)}`}</Text>
           </>
         )}
