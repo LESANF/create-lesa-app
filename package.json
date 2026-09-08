@@ -1,0 +1,33 @@
+{
+  "name": "create-lesa-app",
+  "version": "0.0.1",
+  "description": "Create a new project from the lesa Expo SDK 57 template",
+  "scripts": {
+    "start": "tsx src/index.tsx",
+    "test": "node --experimental-strip-types --no-warnings src/flow.test.mjs",
+    "type-check": "tsc --noEmit",
+    "bake-intro": "node scripts/bake-intro.mjs"
+  },
+  "author": "LESANF",
+  "license": "MIT",
+  "packageManager": "pnpm@10.29.3",
+  "dependencies": {
+    "ink": "^7.0.5",
+    "react": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.17",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  },
+  "type": "module",
+  "bin": {
+    "create-lesa-app": "./src/index.tsx"
+  },
+  "files": [
+    "src",
+    "scripts",
+    "README.md"
+  ]
+}
