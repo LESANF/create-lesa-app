@@ -1,15 +1,17 @@
-#!/usr/bin/env node
 /**
  * create-lesa-app 진입점.
  *
- *   pnpm start <dir> [--template <path>]
+ *   create-lesa-app <dir> [--template <path>]
  *
- * 템플릿 경로는 `--template` 또는 `LESA_TEMPLATE_DIR` 로 준다(레포가 private 이라 로컬 복사).
+ * 템플릿 경로는 `--template` → `LESA_TEMPLATE_DIR` → 형제 폴더 순으로 찾는다
+ * (레포가 private 이라 tarball 이 아니라 로컬 복사다 — `docs/cli.md`).
  */
 
 import { Box, render, Text } from 'ink';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import React, { useState } from 'react';
 
 import { createApp } from './create.ts';
@@ -33,6 +35,20 @@ function parseArgs(argv: string[]) {
   }
 
   return { targetDir: positional[0] ?? '', templateDir };
+}
+
+const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+/** 템플릿 폴더로 보이는지 — 형제 폴더를 기본값으로 쓸지 판단한다. */
+function looksLikeTemplate(dir: string): boolean {
+  return existsSync(path.join(dir, 'env-candidates.ts')) && existsSync(path.join(dir, 'app.config.ts'));
+}
+
+/** `--template` → `LESA_TEMPLATE_DIR` → 형제 `lesa-expo-template`. */
+function resolveTemplateDir(explicit: string): string {
+  if (explicit) return path.resolve(explicit);
+  const sibling = path.resolve(packageRoot, '../lesa-expo-template');
+  return looksLikeTemplate(sibling) ? sibling : '';
 }
 
 type Stage =
@@ -87,15 +103,20 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
   );
 }
 
-const { targetDir, templateDir } = parseArgs(process.argv);
+const args = parseArgs(process.argv);
 
-if (!targetDir) {
+if (!args.targetDir) {
   console.error('Usage: create-lesa-app <dir> [--template <path>]');
   process.exit(1);
 }
+
+const templateDir = resolveTemplateDir(args.templateDir);
 if (!templateDir) {
-  console.error('A template path is required — pass --template <path> or set LESA_TEMPLATE_DIR');
+  console.error(
+    'Could not find the template. Pass --template <path>, set LESA_TEMPLATE_DIR,\n' +
+      `or put lesa-expo-template next to ${packageRoot}`,
+  );
   process.exit(1);
 }
 
-render(<App targetDir={path.resolve(targetDir)} templateDir={path.resolve(templateDir)} />);
+render(<App targetDir={path.resolve(args.targetDir)} templateDir={templateDir} />);

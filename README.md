@@ -4,9 +4,16 @@ Create a new project from the [lesa Expo SDK 57 template](../lesa-expo-template)
 
 ```bash
 pnpm install
-pnpm start ../my-new-app --template ../lesa-expo-template
-# or: LESA_TEMPLATE_DIR=../lesa-expo-template pnpm start ../my-new-app
+npm link          # once — puts `create-lesa-app` on your PATH
+
+create-lesa-app my-new-app        # from anywhere
 ```
+
+The template is found in this order: `--template <path>` → `LESA_TEMPLATE_DIR`
+→ `lesa-expo-template` next to this repo. Siblings need no flag.
+
+`npm link` is tied to the current node version (nvm); re-run it after switching.
+Without linking: `pnpm start ../my-new-app`.
 
 It asks 2–3 questions, copies the template's git-tracked files, substitutes
 `env-candidates.ts`, writes `.env` if you gave an Apple Team ID, and makes an
@@ -28,7 +35,7 @@ packages, versions. See the summary on step 04 before it writes anything.
 
 | | |
 |---|---|
-| `pnpm start <dir> --template <path>` | run the CLI |
+| `pnpm start <dir>` | run the CLI without linking |
 | `pnpm test` | step machine + derivation regression tests (no TTY needed) |
 | `pnpm type-check` | `tsc --noEmit` |
 | `pnpm bake-intro` | re-bake `assets/*.asciimtn` → `src/assets/intro.json` |
@@ -43,7 +50,8 @@ src/copy.ts          copies `git ls-files` only
 src/create.ts        orchestration + cleanup on failure
 src/ui.tsx           the ink prompt
 src/intro.tsx        ASCII wordmark, plays once then freezes
-src/index.tsx        entry — arg parsing + render
+src/index.tsx        entry — arg parsing, template lookup, render
+bin/                 registers the tsx loader (node can't run .tsx directly)
 ```
 
 **The substitution contract lives in the template**, not here:
