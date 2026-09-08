@@ -27,7 +27,6 @@
   },
   "files": [
     "src",
-    "scripts",
     "README.md"
   ]
 }
