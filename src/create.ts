@@ -18,10 +18,10 @@ const run = promisify(execFile);
 
 /** 진행 표시용 단계 이름 — UI 가 이 순서대로 목록을 그린다. */
 export const CREATE_STEPS = [
-  'Copy template',
-  'Apply env-candidates.ts',
+  'Copy template files',
+  'Configure app identity',
   'Write .env',
-  'Git init',
+  'Initialize git',
 ] as const;
 
 export type CreateProgress = {

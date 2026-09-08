@@ -56,8 +56,8 @@ type Stage =
   | { kind: 'working'; progress: CreateProgress; skipped: number[] }
   | { kind: 'done'; result: CreateResult };
 
-/** 워드마크(20줄) + 가장 긴 화면이 들어갈 높이. 모자라면 애니메이션을 멈춘다. */
-const ANIMATE_MIN_ROWS = 46;
+/** 워드마크(13줄) + 가장 긴 화면이 들어갈 높이. 모자라면 애니메이션을 멈춘다. */
+const ANIMATE_MIN_ROWS = 34;
 
 function App({ targetDir, templateDir }: { targetDir: string; templateDir: string }) {
   const { exit } = useApp();
@@ -134,7 +134,8 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
             current={CREATE_STEPS.length}
             details={{
               0: `${stage.result.receipt.fileCount} files`,
-              1: 'identity substituted',
+              1: 'name · scheme · bundle id',
+              2: stage.result.receipt.wroteEnvFile ? 'Apple Team ID' : '',
               3: '1 commit',
             }}
             labels={CREATE_STEPS}
