@@ -61,7 +61,7 @@ export function advance(state: FlowState): FlowState {
     const name = state.name.trim();
     if (!name) return { ...state, error: 'Enter an app name.' };
     // ASCII 면 그게 slug 다. 대신 홈 화면 이름을 다듬을 기회를 준다
-    // (비우면 `name` 이 그대로 홈 화면에 뜬다 — `gym-log` 같은 게 그대로 보인다).
+    // (비우면 `name` 이 그대로 홈 화면에 뜬다 — 하이픈이 그대로 보인다).
     if (isUsableAsSlug(name)) {
       return { ...state, error: null, name, slug: name, step: 'display' };
     }
