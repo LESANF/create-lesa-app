@@ -7,12 +7,12 @@
  * (레포가 private 이라 tarball 이 아니라 로컬 복사다 — `docs/cli.md`).
  */
 
-import { Box, render, Text } from 'ink';
+import { Box, render, Text, useApp, useStdout } from 'ink';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { createApp, CREATE_STEPS } from './create.ts';
 import { Intro } from './intro.tsx';
@@ -56,9 +56,22 @@ type Stage =
   | { kind: 'working'; progress: CreateProgress; skipped: number[] }
   | { kind: 'done'; result: CreateResult };
 
+/** 워드마크(20줄) + 가장 긴 화면이 들어갈 높이. 모자라면 애니메이션을 멈춘다. */
+const ANIMATE_MIN_ROWS = 46;
+
 function App({ targetDir, templateDir }: { targetDir: string; templateDir: string }) {
+  const { exit } = useApp();
+  const { stdout } = useStdout();
   const [stage, setStage] = useState<Stage>({ kind: 'input' });
   const [error, setError] = useState<string | null>(null);
+
+  const settled = error !== null || stage.kind === 'done';
+
+  // 끝나면 스스로 빠져나온다 — 인트로 타이머와 raw mode 가 이벤트 루프를 붙잡고 있어서
+  // exit() 를 부르지 않으면 프로세스가 안 죽는다.
+  useEffect(() => {
+    if (settled) exit();
+  }, [exit, settled]);
 
   const onDone = (input: PromptResult) => {
     setStage({ kind: 'working', progress: { index: 0 }, skipped: [] });
@@ -88,9 +101,11 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
 
   return (
     <Box flexDirection="column">
-      <Intro />
+      {/* 출력이 터미널 높이를 넘으면 ink 가 제자리 갱신을 못 해 매 프레임이 쌓인다.
+          완료·실패 화면은 가장 길므로 그때도 멈춘다. */}
+      <Intro loop={!settled && (stdout?.rows ?? 0) >= ANIMATE_MIN_ROWS} />
       {error ? (
-        <Frame footer="Esc to quit">
+        <Frame footer="Failed — nothing was left behind">
           <Section color={colors.error} marker="■" title="Failed to create the project">
             <Text color={colors.softText}>{`  ${error}`}</Text>
           </Section>

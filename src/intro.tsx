@@ -20,7 +20,11 @@ export function Intro({ loop = true }: { loop?: boolean }) {
 
   useEffect(() => {
     const last = frames.length - 1;
-    if (index >= last && !loop) return;
+    // loop 이 꺼지면 정착 프레임으로 붙이고 타이머를 놓는다(호출부가 높이를 보고 끈다).
+    if (!loop) {
+      setIndex(last);
+      return;
+    }
     const timer = setTimeout(() => setIndex(index >= last ? 0 : index + 1), frames[index].ms);
     return () => clearTimeout(timer);
   }, [index, loop]);
