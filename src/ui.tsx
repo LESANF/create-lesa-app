@@ -66,34 +66,60 @@ function Field({ hint, label, value }: { hint: string; label: string; value: str
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+const ENVS = ['development', 'preview', 'production'] as const;
+
+function Row({ label, note, value, width }: Row) {
   return (
     <Text color={colors.muted}>
-      {`  ${label.padEnd(13)}`}
+      {`    ${label.padEnd(width)}`}
       <Text color={colors.text}>{value}</Text>
+      {note ? <Text color={colors.faint}>{`   ${note}`}</Text> : null}
     </Text>
   );
 }
 
+type Row = { label: string; note?: string; value: string; width: number };
+
 function Summary({ state }: { state: FlowState }) {
   const fields = derive(toInput(state));
+
+  const top: Omit<Row, 'width'>[] = [
+    {
+      label: 'Display name',
+      note: fields.displayName ? 'under the app icon' : 'same as project name',
+      value: fields.displayName || fields.name,
+    },
+    { label: 'Project name', note: 'Xcode project · Expo slug', value: fields.name },
+    { label: 'Version', value: '0.0.1 (build 1)' },
+    {
+      label: 'iOS signing',
+      note: state.appleTeamId ? 'Apple Team ID' : undefined,
+      value: state.appleTeamId || 'Xcode automatic',
+    },
+  ];
+  // 라벨·환경명·scheme 열 폭을 내용에서 잡는다 — slug 길이에 따라 안 어긋나게.
+  const labelWidth = Math.max(...top.map(row => row.label.length), 'production'.length) + 2;
+  const schemeWidth = Math.max(...ENVS.map(env => fields.scheme[env].length), 'URL scheme'.length) + 3;
+
   return (
     <Box flexDirection="column">
       <Text color={colors.doneSoft}>{'  Ready to create'}</Text>
       <Box flexDirection="column" marginTop={1}>
-        <Row label="name" value={fields.name} />
-        <Row label="home screen" value={fields.displayName || `${fields.name}  (same as name)`} />
-        <Row
-          label="scheme"
-          value={`${fields.scheme.development} / ${fields.scheme.preview} / ${fields.scheme.production}`}
-        />
-        <Row
-          label="bundleId"
-          value={`${fields.bundleId.development} / ${fields.bundleId.preview} / ${fields.bundleId.production}`}
-        />
-        <Row label="package" value="(same as bundleId)" />
-        <Row label="version" value="0.0.1 (1)" />
-        <Row label="appleTeamId" value={state.appleTeamId || '(Xcode automatic signing)'} />
+        {top.map(row => (
+          <Row key={row.label} {...row} width={labelWidth} />
+        ))}
+      </Box>
+      <Box flexDirection="column" marginTop={1}>
+        <Text color={colors.faint}>
+          {`    ${''.padEnd(labelWidth)}${'URL scheme'.padEnd(schemeWidth)}iOS bundle ID · Android package`}
+        </Text>
+        {ENVS.map(env => (
+          <Text color={colors.muted} key={env}>
+            {`    ${env.padEnd(labelWidth)}`}
+            <Text color={colors.text}>{fields.scheme[env].padEnd(schemeWidth)}</Text>
+            <Text color={colors.text}>{fields.bundleId[env]}</Text>
+          </Text>
+        ))}
       </Box>
     </Box>
   );
@@ -133,7 +159,7 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
 
       {state.step === 'name' ? (
         <Field
-          hint="Shown on the home screen — any language (e.g. workout, 워크아웃)"
+          hint="Any language. Lowercase ASCII doubles as the slug; anything else asks for one"
           label="App name"
           value={state.name}
         />
@@ -149,8 +175,8 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
 
       {state.step === 'display' ? (
         <Field
-          hint={`Optional — Enter to keep "${state.name}". Set it to control casing/spacing (e.g. Gym Log)`}
-          label="Home screen name"
+          hint={`Optional — Enter keeps "${state.name}". Set it to control casing and spacing`}
+          label="Display name"
           value={state.display}
         />
       ) : null}

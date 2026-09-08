@@ -100,7 +100,7 @@ export function toInput(state: FlowState): AppInput {
 }
 
 export const STEP_LABELS: Record<StepId, string> = {
-  display: 'LABEL',
+  display: 'DISPLAY',
   name: 'NAME',
   ready: 'READY',
   slug: 'SLUG',
