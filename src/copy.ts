@@ -24,7 +24,7 @@ export async function assertTemplate(templateDir: string): Promise<void> {
     try {
       await access(path.join(templateDir, marker));
     } catch {
-      throw new CopyError(`템플릿 폴더가 아닙니다 (${marker} 없음): ${templateDir}`);
+      throw new CopyError(`Not a template directory (no ${marker}): ${templateDir}`);
     }
   }
 }
@@ -38,7 +38,7 @@ export async function assertEmptyTarget(targetDir: string): Promise<void> {
     return; // 없으면 아래에서 만든다
   }
   if (entries.filter(name => name !== '.DS_Store').length > 0) {
-    throw new CopyError(`대상 디렉터리가 비어 있지 않습니다: ${targetDir}`);
+    throw new CopyError(`Target directory is not empty: ${targetDir}`);
   }
 }
 
@@ -53,8 +53,8 @@ async function trackedFiles(templateDir: string): Promise<string[]> {
     return files;
   } catch {
     throw new CopyError(
-      `템플릿에서 git 추적 파일을 읽지 못했습니다: ${templateDir}\n` +
-        `  git 레포여야 합니다(복사 대상을 git 이 정한다).`
+      `Could not list git-tracked files in the template: ${templateDir}\n` +
+        `  It must be a git repo — git decides what gets copied.`
     );
   }
 }

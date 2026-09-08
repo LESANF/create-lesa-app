@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 
 import { createApp } from './create.ts';
 import { Intro } from './intro.tsx';
-import { Prompt } from './ui.tsx';
+import { Frame, Prompt, railColors as colors, Section } from './ui.tsx';
 
 import type { CreateResult } from './create.ts';
 import type { PromptResult } from './ui.tsx';
@@ -79,23 +79,28 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
     <Box flexDirection="column">
       <Intro />
       {error ? (
-        <Box flexDirection="column" marginTop={1} paddingLeft={2}>
-          <Text color="#FB7185">{'Failed to create the project'}</Text>
-          <Text color="#CBD5E1">{error}</Text>
-        </Box>
+        <Frame footer="Esc to quit">
+          <Section color={colors.error} marker="■" title="Failed to create the project">
+            <Text color={colors.softText}>{`  ${error}`}</Text>
+          </Section>
+        </Frame>
       ) : stage.kind === 'working' ? (
-        <Box marginTop={1} paddingLeft={2}>
-          <Text color="#FBBF24">{`… ${stage.step}`}</Text>
-        </Box>
+        <Frame footer="Working…">
+          <Section color={colors.accent} marker="◆" title={stage.step} />
+        </Frame>
       ) : stage.kind === 'done' ? (
-        <Box flexDirection="column" marginTop={1} paddingLeft={2}>
-          <Text color="#2DD4BF">{`✔ Created ${path.basename(stage.result.targetDir)}`}</Text>
-          <Box flexDirection="column" marginTop={1}>
+        <Frame footer="Done">
+          <Section
+            color={colors.done}
+            marker="◆"
+            title={`Created ${path.basename(stage.result.targetDir)}`}
+          />
+          <Section color={colors.done} marker="◇" title="Next steps">
             {stage.result.nextSteps.map(step => (
-              <Text color="#CBD5E1" key={step}>{`  ${step}`}</Text>
+              <Text color={colors.softText} key={step}>{`  ${step}`}</Text>
             ))}
-          </Box>
-        </Box>
+          </Section>
+        </Frame>
       ) : (
         <Prompt onDone={onDone} />
       )}

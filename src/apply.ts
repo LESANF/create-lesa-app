@@ -42,7 +42,7 @@ export async function applyEnvCandidates(
   try {
     source = await readFile(file, 'utf8');
   } catch {
-    throw new ApplyError(`env-candidates.ts 를 찾을 수 없습니다: ${file}`);
+    throw new ApplyError(`Could not find env-candidates.ts: ${file}`);
   }
 
   for (const [from, to] of replacements(fields)) {
@@ -53,7 +53,7 @@ export async function applyEnvCandidates(
     const before = source;
     source = source.replace("displayName: '',", `displayName: '${fields.displayName}',`);
     if (source === before) {
-      throw new ApplyError("displayName 자리(`displayName: '',`)를 찾지 못했습니다.");
+      throw new ApplyError("Could not find the displayName slot (`displayName: '',`).");
     }
   }
 
@@ -63,7 +63,7 @@ export async function applyEnvCandidates(
     .filter(([, line]) => LEFTOVER.test(line));
   if (leftover.length > 0) {
     throw new ApplyError(
-      `치환되지 않은 자리표시가 남았습니다 — 템플릿이 바뀌었을 수 있습니다:\n` +
+      `Placeholders were left unreplaced — the template may have changed:\n` +
         leftover.map(([n, line]) => `  env-candidates.ts:${n}  ${line.trim()}`).join('\n')
     );
   }
@@ -86,7 +86,7 @@ export async function applyEnvFile(projectDir: string, appleTeamId: string): Pro
   const line = `APP_BUILD_ONLY_APPLE_TEAM_ID=${appleTeamId}`;
   const replaced = source.replace(/^# APP_BUILD_ONLY_APPLE_TEAM_ID=$/m, line);
   if (replaced === source) {
-    throw new ApplyError('.env.example 에서 APP_BUILD_ONLY_APPLE_TEAM_ID 주석 줄을 찾지 못했습니다.');
+    throw new ApplyError('Could not find the APP_BUILD_ONLY_APPLE_TEAM_ID line in .env.example.');
   }
 
   await writeFile(target, replaced);

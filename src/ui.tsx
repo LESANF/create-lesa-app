@@ -1,126 +1,185 @@
 /**
- * 프롬프트 UI — 팔레트·StepRail 은 `ascii-cli-test/preview.js` 목업에서 가져왔다(원본 제거).
- * 스텝 전이는 `flow.ts` 의 순수 함수가 전부 결정한다(여기는 그리기만).
- * 사용자에게 보이는 문구는 영어로 맞춘다.
+ * 프롬프트 UI — @clack/prompts 의 세로 레일 + ink 내장 박스(`cli-boxes`) 조합.
+ * 답한 값은 레일에 남겨 무엇을 입력했는지 계속 보이게 한다.
+ * 스텝 전이는 `flow.ts` 순수 함수가 결정한다(여기는 그리기만). 문구는 영어.
  */
 
 import { Box, Text, useApp, useInput } from 'ink';
 import React, { useState } from 'react';
 
 import { derive } from './derive.ts';
-import {
-  advance,
-  editingField,
-  initialFlow,
-  isUsableAsSlug,
-  setField,
-  STEP_LABELS,
-  stepOrder,
-  toInput,
-} from './flow.ts';
+import { advance, answered, editingField, initialFlow, setField, toInput } from './flow.ts';
 
 import type { AppInput } from './derive.ts';
 import type { FlowState } from './flow.ts';
 
 const colors = {
-  active: '#FBBF24',
-  activeSoft: '#FDE68A',
+  accent: '#FBBF24',
+  done: '#2DD4BF',
   doneSoft: '#99F6E4',
   error: '#FB7185',
   faint: '#475569',
   muted: '#94A3B8',
+  rail: '#334155',
   softText: '#CBD5E1',
   text: '#F8FAFC',
 } as const;
 
-function StepRail({ state }: { state: FlowState }) {
-  const order = stepOrder(state);
-  const current = order.indexOf(state.step);
-  return (
-    <Text>
-      {order.map((id, index) => (
-        <Text
-          color={
-            index === current ? colors.activeSoft : index < current ? colors.doneSoft : colors.muted
-          }
-          key={id}
-        >
-          {`${index > 0 ? '  ──  ' : ''}${index === current ? '◆' : index < current ? '◇' : '○'} 0${index + 1} ${STEP_LABELS[id]}`}
-        </Text>
-      ))}
-    </Text>
-  );
-}
+const ENVS = ['development', 'preview', 'production'] as const;
 
-function Field({ hint, label, value }: { hint: string; label: string; value: string }) {
+const PANEL_WIDTH = 66;
+
+/**
+ * 세로 레일 — 왼쪽 테두리만 켠 Box 라 내용 높이만큼 `│` 가 알아서 늘어난다.
+ * 마커(◆/◇)는 각 절의 첫 줄 안에 넣는다(별도 열로 두면 박스 옆에서 레일이 끊긴다).
+ */
+export function Rail({ children }: { children: React.ReactNode }) {
   return (
-    <Box flexDirection="column">
-      <Text color={colors.softText}>{`  ${label}`}</Text>
-      <Text color={colors.faint}>{`  ${hint}`}</Text>
-      <Text>
-        <Text color={colors.faint}>{'  › '}</Text>
-        <Text color={colors.text}>{value}</Text>
-        <Text color={colors.active}>▌</Text>
-      </Text>
+    <Box
+      borderBottom={false}
+      borderLeftColor={colors.rail}
+      borderRight={false}
+      borderStyle="single"
+      borderTop={false}
+      flexDirection="column"
+      marginLeft={2}
+      paddingLeft={2}
+    >
+      {children}
     </Box>
   );
 }
 
-const ENVS = ['development', 'preview', 'production'] as const;
-
-function Row({ label, note, value, width }: Row) {
+/** 레일 위 한 절 — 마커 + 제목, 그 아래 내용. */
+export function Section({
+  children,
+  color,
+  marker,
+  title,
+}: {
+  children?: React.ReactNode;
+  color: string;
+  marker: string;
+  title: string;
+}) {
   return (
-    <Text color={colors.muted}>
-      {`    ${label.padEnd(width)}`}
-      <Text color={colors.text}>{value}</Text>
-      {note ? <Text color={colors.faint}>{`   ${note}`}</Text> : null}
-    </Text>
+    <>
+      <Text color={colors.rail}>{'\u00a0'}</Text>
+      <Text>
+        <Text color={color}>{`${marker} `}</Text>
+        <Text color={colors.softText}>{title}</Text>
+      </Text>
+      {children}
+    </>
   );
 }
 
-type Row = { label: string; note?: string; value: string; width: number };
+/** `width` 를 주면 고정폭(입력 칸), 안 주면 내용에 맞춘다(요약 표는 잘리면 안 된다). */
+function Panel({
+  children,
+  color,
+  width,
+}: {
+  children: React.ReactNode;
+  color: string;
+  width?: number;
+}) {
+  return (
+    // alignSelf 없으면 flex column 의 기본 stretch 로 레일 폭까지 늘어난다.
+    <Box
+      alignSelf="flex-start"
+      borderColor={color}
+      borderStyle="round"
+      flexDirection="column"
+      paddingX={1}
+      width={width}
+    >
+      {children}
+    </Box>
+  );
+}
 
 function Summary({ state }: { state: FlowState }) {
   const fields = derive(toInput(state));
-
-  const top: Omit<Row, 'width'>[] = [
+  const rows = [
     {
       label: 'Display name',
       note: fields.displayName ? 'under the app icon' : 'same as project name',
       value: fields.displayName || fields.name,
     },
     { label: 'Project name', note: 'Xcode project · Expo slug', value: fields.name },
-    { label: 'Version', value: '0.0.1 (build 1)' },
+    { label: 'Version', note: undefined, value: '0.0.1 (build 1)' },
     {
       label: 'iOS signing',
       note: state.appleTeamId ? 'Apple Team ID' : undefined,
       value: state.appleTeamId || 'Xcode automatic',
     },
   ];
-  // 라벨·환경명·scheme 열 폭을 내용에서 잡는다 — slug 길이에 따라 안 어긋나게.
-  const labelWidth = Math.max(...top.map(row => row.label.length), 'production'.length) + 2;
-  const schemeWidth = Math.max(...ENVS.map(env => fields.scheme[env].length), 'URL scheme'.length) + 3;
+  // 열 폭을 내용에서 잡는다 — slug 이 길어도 어긋나지 않는다.
+  const labelWidth = Math.max(...rows.map(row => row.label.length), 'development'.length) + 2;
+  const schemeWidth = Math.max(...ENVS.map(env => fields.scheme[env].length), 10) + 3;
 
   return (
-    <Box flexDirection="column">
-      <Text color={colors.doneSoft}>{'  Ready to create'}</Text>
-      <Box flexDirection="column" marginTop={1}>
-        {top.map(row => (
-          <Row key={row.label} {...row} width={labelWidth} />
-        ))}
-      </Box>
-      <Box flexDirection="column" marginTop={1}>
-        <Text color={colors.faint}>
-          {`    ${''.padEnd(labelWidth)}${'URL scheme'.padEnd(schemeWidth)}iOS bundle ID · Android package`}
+    <Panel color={colors.done}>
+      {rows.map(row => (
+        <Text color={colors.muted} key={row.label}>
+          {row.label.padEnd(labelWidth)}
+          <Text color={colors.text}>{row.value}</Text>
+          {row.note ? <Text color={colors.faint}>{`   ${row.note}`}</Text> : null}
         </Text>
-        {ENVS.map(env => (
-          <Text color={colors.muted} key={env}>
-            {`    ${env.padEnd(labelWidth)}`}
-            <Text color={colors.text}>{fields.scheme[env].padEnd(schemeWidth)}</Text>
-            <Text color={colors.text}>{fields.bundleId[env]}</Text>
-          </Text>
-        ))}
-      </Box>
+      ))}
+      <Box marginTop={1} />
+      <Text color={colors.faint}>
+        {`${''.padEnd(labelWidth)}${'URL scheme'.padEnd(schemeWidth)}iOS bundle ID · Android package`}
+      </Text>
+      {ENVS.map(env => (
+        <Text color={colors.muted} key={env}>
+          {env.padEnd(labelWidth)}
+          <Text color={colors.text}>{fields.scheme[env].padEnd(schemeWidth)}</Text>
+          <Text color={colors.text}>{fields.bundleId[env]}</Text>
+        </Text>
+      ))}
+    </Panel>
+  );
+}
+
+const PROMPTS: Record<string, { hint: (state: FlowState) => string; title: string }> = {
+  display: {
+    hint: state => `Optional — Enter keeps "${state.name}". Set it to control casing and spacing`,
+    title: 'Display name',
+  },
+  name: {
+    hint: () => 'Any language. Lowercase ASCII doubles as the slug; anything else asks for one',
+    title: 'App name',
+  },
+  slug: {
+    hint: () => 'Lowercase, digits, hyphens — drives the Xcode project, schemes and bundle id',
+    title: 'Slug',
+  },
+  team: {
+    hint: () => 'Optional, iOS only — Enter to skip. Android needs nothing here',
+    title: 'Apple Team ID',
+  },
+};
+
+export const railColors = colors;
+
+/** `┌ create-lesa-app` … `└ <footer>` 껍데기 — 프롬프트·진행·완료가 같은 모양을 쓴다. */
+export function Frame({ children, footer }: { children: React.ReactNode; footer: string }) {
+  return (
+    <Box flexDirection="column" marginTop={1}>
+      <Text>
+        <Text color={colors.rail}>{'  ┌  '}</Text>
+        <Text color={colors.softText}>create-lesa-app</Text>
+      </Text>
+      <Rail>
+        {children}
+        <Text color={colors.rail}>{'\u00a0'}</Text>
+      </Rail>
+      <Text>
+        <Text color={colors.rail}>{'  └  '}</Text>
+        <Text color={colors.faint}>{footer}</Text>
+      </Text>
     </Box>
   );
 }
@@ -133,6 +192,8 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
   const [state, setState] = useState<FlowState>(initialFlow);
 
   const field = editingField(state.step);
+  const prompt = PROMPTS[state.step];
+  const history = answered(state);
 
   useInput((input, key) => {
     if (key.escape || (key.ctrl && input === 'c')) return exit();
@@ -152,58 +213,42 @@ export function Prompt({ onDone }: { onDone: (result: PromptResult) => void }) {
     setState(advance(filled));
   });
 
+  const footer =
+    state.step === 'ready'
+      ? 'Enter create · Esc cancel'
+      : state.step === 'display' || state.step === 'team'
+        ? 'Enter skip or continue · Esc cancel'
+        : 'Enter continue · Esc cancel';
+
   return (
-    <Box flexDirection="column" marginTop={1} paddingLeft={2}>
-      <StepRail state={state} />
-      <Box marginTop={1} />
+    <Frame footer={footer}>
+      {history.map(row => (
+        <Section color={colors.done} key={row.label} marker="◇" title={row.label}>
+          <Text color={colors.text}>{`  ${row.value}`}</Text>
+        </Section>
+      ))}
 
-      {state.step === 'name' ? (
-        <Field
-          hint="Any language. Lowercase ASCII doubles as the slug; anything else asks for one"
-          label="App name"
-          value={state.name}
-        />
-      ) : null}
-
-      {state.step === 'slug' ? (
-        <Field
-          hint="Lowercase, digits, hyphens — drives the Xcode project, schemes and bundle id"
-          label="Slug"
-          value={state.slug}
-        />
-      ) : null}
-
-      {state.step === 'display' ? (
-        <Field
-          hint={`Optional — Enter keeps "${state.name}". Set it to control casing and spacing`}
-          label="Display name"
-          value={state.display}
-        />
-      ) : null}
-
-      {state.step === 'team' ? (
-        <Field
-          hint="Optional, iOS only — Enter to skip and use Xcode automatic signing. Android needs nothing here."
-          label="Apple Team ID"
-          value={state.appleTeamId}
-        />
-      ) : null}
-
-      {state.step === 'ready' ? <Summary state={state} /> : null}
-
-      {state.error ? <Text color={colors.error}>{`  ${state.error}`}</Text> : null}
-
-      <Box marginTop={1}>
-        <Text color={colors.faint}>
-          {state.step === 'ready'
-            ? '  Enter create · Esc cancel'
-            : state.step === 'name' && isUsableAsSlug(state.name)
-              ? '  Enter continue (slug: reuses this name) · Esc cancel'
-              : state.step === 'display' || state.step === 'team'
-                ? '  Enter skip or continue · Esc cancel'
-                : '  Enter continue · Esc cancel'}
-        </Text>
-      </Box>
-    </Box>
+      <Section
+        color={state.error ? colors.error : state.step === 'ready' ? colors.done : colors.accent}
+        marker="◆"
+        title={state.step === 'ready' ? 'Ready to create' : prompt.title}
+      >
+        {state.step === 'ready' ? (
+          <Summary state={state} />
+        ) : (
+          <>
+            <Panel color={state.error ? colors.error : colors.accent} width={PANEL_WIDTH}>
+              <Text>
+                <Text color={colors.faint}>{'› '}</Text>
+                <Text color={colors.text}>{state[field!]}</Text>
+                <Text color={colors.accent}>▌</Text>
+              </Text>
+            </Panel>
+            <Text color={colors.faint}>{`  ${prompt.hint(state)}`}</Text>
+          </>
+        )}
+        {state.error ? <Text color={colors.error}>{`  ${state.error}`}</Text> : null}
+      </Section>
+    </Frame>
   );
 }

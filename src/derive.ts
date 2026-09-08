@@ -27,12 +27,12 @@ export const SLUG_PATTERN = /^[a-z][a-z0-9-]*$/;
 
 /** 입력 검증 — 통과하지 못하면 이유를 돌려준다(호출부가 다시 묻는다). */
 export function validateSlug(slug: string): string | null {
-  if (!slug) return 'slug 을 입력하세요.';
+  if (!slug) return 'Enter a slug.';
   if (!SLUG_PATTERN.test(slug)) {
-    return '영문 소문자로 시작하고, 소문자·숫자·하이픈만 쓸 수 있습니다 (예: my-app).';
+    return 'Start with a lowercase letter; use only lowercase letters, digits and hyphens.';
   }
   // reverse-domain 세그먼트로 들어가므로 하이픈으로 끝나면 `com.my-app-.development` 가 된다.
-  if (slug.endsWith('-')) return '하이픈으로 끝날 수 없습니다.';
+  if (slug.endsWith('-')) return 'Cannot end with a hyphen.';
   return null;
 }
 

@@ -112,3 +112,20 @@ export function stepOrder(state: FlowState): StepId[] {
   const second: StepId = state.step === 'slug' || !isUsableAsSlug(state.name) ? 'slug' : 'display';
   return ['name', second, 'team', 'ready'];
 }
+
+/** 이미 답한 스텝들 — 레일에 남겨 무엇을 입력했는지 보이게 한다. */
+export function answered(state: FlowState): { label: string; value: string }[] {
+  const order = stepOrder(state);
+  const current = order.indexOf(state.step);
+  const shown: { label: string; value: string }[] = [];
+
+  for (const id of order.slice(0, current === -1 ? order.length : current)) {
+    if (id === 'name') shown.push({ label: 'App name', value: state.name });
+    if (id === 'slug') shown.push({ label: 'Slug', value: state.slug });
+    if (id === 'display')
+      shown.push({ label: 'Display name', value: state.display || `${state.name}  (kept)` });
+    if (id === 'team')
+      shown.push({ label: 'Apple Team ID', value: state.appleTeamId || 'skipped' });
+  }
+  return shown;
+}
