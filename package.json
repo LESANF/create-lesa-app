@@ -6,7 +6,8 @@
     "start": "tsx src/index.tsx",
     "test": "node --experimental-strip-types --no-warnings src/flow.test.mjs",
     "type-check": "tsc --noEmit",
-    "bake-intro": "node scripts/bake-intro.mjs"
+    "bake-intro": "node scripts/bake-intro.mjs",
+    "bake-svg": "node scripts/bake-svg.mjs"
   },
   "author": "LESANF",
   "license": "MIT",

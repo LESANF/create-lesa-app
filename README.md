@@ -1,131 +1,64 @@
+<img src="assets/intro.svg" alt="LESA APPKIT" width="487">
+
 # create-lesa-app
 
-A small CLI that turns the [lesa Expo template](#the-template) into a new project:
-it asks two or three questions, derives every identifier from one slug, copies the
-template's git-tracked files, and makes the first commit.
-
-```
-  ┌  create-lesa-app
-  │
-  │  ◇ App name
-  │    레사앱
-  │
-  │  ◇ Slug
-  │    lesa-app
-  │
-  │  ◆ Apple Team ID
-  │    ▌
-  │    optional · iOS only · Enter to skip
-  │
-  └  Enter skip or continue · Esc cancel
-```
-
-## The template
-
-**This CLI does not contain the template — it copies one from a local folder.**
-The template repository is not public yet, so unless you already have a copy this
-tool has nothing to work with. It looks for one in this order:
-
-1. `--template <path>`
-2. `$LESA_TEMPLATE_DIR`
-3. a sibling `lesa-expo-template` directory next to this package
-
-Copying is driven by `git ls-files` in the template, so build output and local
-state (`ios/`, `android/`, `.env`, stores) are excluded by definition — and a
-**new template file must be `git add`ed before it will be copied.**
-
-## Usage
+Launcher for the lesa Expo template. Asks two or three questions, derives every
+identifier from one slug, copies the template and makes the first commit.
 
 ```bash
-pnpm install
-npm link                    # once — puts `create-lesa-app` on your PATH
-
+pnpm install && npm link       # once
 create-lesa-app my-new-app
 ```
 
 ```
-create-lesa-app <dir> [options]
-
-  --template <path>   template directory (see above)
-  -h, --help          show usage
-  -v, --version       print the version
+  ┌  create-lesa-app
+  │
+  │  ◇ App name        레사앱
+  │  ◇ Slug            lesa-app
+  │  ◆ Apple Team ID   ▌   optional · iOS only · Enter to skip
+  │
+  └  Enter skip or continue · Esc cancel
 ```
 
-`npm link` is tied to the current Node version (nvm) — re-run it after switching.
-Without linking, run `pnpm start ../my-new-app` from inside this repo.
+> **It does not contain the template.** It copies one from a local folder, and
+> that repository is not public yet — without a copy there is nothing to work
+> with. Lookup order: `--template <path>` → `$LESA_TEMPLATE_DIR` → a sibling
+> `lesa-expo-template` folder.
 
-## What it asks
+## What one slug becomes
 
-|                             |                                                                      |
-| --------------------------- | -------------------------------------------------------------------- |
-| **App name**                | any language. Lowercase ASCII doubles as the slug                    |
-| **Slug**                    | asked only when the name is not a valid slug (`^[a-z][a-z0-9-]*$`)   |
-| **Name on the home screen** | asked only when the name _is_ ASCII, so you can fix casing. Optional |
-| **Apple Team ID**           | optional, iOS only. Skipped → Xcode automatic signing                |
+|                        | development                 | preview               | production    |
+| ---------------------- | --------------------------- | --------------------- | ------------- |
+| `name` · `slug`        | `<slug>` — all environments |                       |               |
+| `scheme`               | `<slug>-dev`                | `<slug>-preview`      | `<slug>`      |
+| `bundleId` · `package` | `com.<slug*>.development`   | `com.<slug*>.preview` | `com.<slug*>` |
+| version                | `0.0.1` build `1`           |                       |               |
 
-Korean and Japanese names are never romanized automatically — the transliteration
-is lossy and this value becomes the Xcode project name, the scheme and
-`PRODUCT_NAME`. So a non-ASCII name is kept as the display name and a slug is
-asked separately.
+`<slug*>` drops hyphens — Android package names allow only letters, digits and
+underscores between periods, so `lesa-app` → `com.lesaapp`. URL schemes keep them.
 
-## What it derives
+A non-ASCII app name is kept as the home-screen name and a slug is asked
+separately; it is never romanized, because that value becomes the Xcode project
+name, the scheme and `PRODUCT_NAME`.
 
-Everything comes from the slug. `production` gets no suffix.
+## Not asked
 
-| field                  | development                                       | preview               | production    |
-| ---------------------- | ------------------------------------------------- | --------------------- | ------------- |
-| `name` · `slug`        | `<slug>` (all environments)                       |                       |               |
-| `displayName`          | the non-ASCII name, or what you typed, else empty |                       |               |
-| `scheme`               | `<slug>-dev`                                      | `<slug>-preview`      | `<slug>`      |
-| `bundleId` · `package` | `com.<slug*>.development`                         | `com.<slug*>.preview` | `com.<slug*>` |
-| version                | `0.0.1` / build `1`                               |                       |               |
+API and OTA URLs, universal-link hosts, Android signing, icons and `firebase/`
+files — none of them are knowable at creation time. Everything the project must
+fill in is marked `TODO(앱)`, and the closing screen prints the `grep` for it.
 
-`<slug*>` is the slug **with hyphens removed**: Android package names allow only
-letters, digits and underscores separated by periods, so `lesa-app` becomes
-`com.lesaapp`. URL schemes do allow hyphens, so those keep them (`lesa-app-dev`).
+## Notes
 
-## What it does not ask
+- Copying is driven by `git ls-files` in the template, so build output and local
+  state are excluded by definition — **a new template file must be `git add`ed
+  before it gets copied.**
+- `npm link` is tied to the current Node version (nvm); re-run after switching.
+  Or run `pnpm start ../my-new-app` from inside this repo.
+- The prompt state machine lives outside the UI (`src/flow.ts`) because
+  `useInput` needs a TTY. `pnpm test` drives the whole flow without rendering.
+- A failed run removes the directory it created. Ctrl+C leaves it alone.
 
-|                            | why                                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| API / OTA URLs             | not known at creation time. The template ships a `.invalid` production API on purpose so an unconfigured production build fails loudly |
-| universal link hosts       | needs a domain and an AASA file first                                                                                                  |
-| Android signing            | release signing is a keystore _file_ plus Gradle env vars — nothing exists yet                                                         |
-| icons, splash, `firebase/` | binary assets a CLI cannot invent                                                                                                      |
-
-Everything else the project must fill in is marked `TODO(앱)` in the generated
-code; the closing screen prints the `grep` for it.
-
-## Scripts
-
-|                    |                                                       |
-| ------------------ | ----------------------------------------------------- |
-| `pnpm start <dir>` | run without linking                                   |
-| `pnpm test`        | step-machine and derivation tests — no TTY needed     |
-| `pnpm type-check`  | `tsc --noEmit`                                        |
-| `pnpm bake-intro`  | re-bake `assets/*.asciimtn` → `src/assets/intro.json` |
-
-## Layout
-
-```
-src/derive.ts        slug → every field (pure)
-src/flow.ts          prompt step machine (pure — testable without a TTY)
-src/apply.ts         env-candidates.ts substitution · .env
-src/copy.ts          copies `git ls-files` only
-src/create.ts        orchestration + cleanup on failure
-src/ui.tsx           the ink prompt
-src/intro.tsx        ASCII wordmark
-src/index.tsx        entry — argument parsing, template lookup, render
-bin/                 registers the tsx loader (Node cannot run .tsx directly)
-```
-
-The prompt state machine lives outside the UI on purpose: `useInput` needs a TTY,
-so anything inside it cannot be tested. `pnpm test` drives the whole flow without
-rendering.
-
-If the run fails partway, the directory it created is removed — except after
-Ctrl+C, where a partial tree is left alone rather than silently deleted.
-
-## License
+`--help` · `--version` · `pnpm test` · `pnpm type-check` · `pnpm bake-intro` ·
+`pnpm bake-svg`.
 
 MIT
