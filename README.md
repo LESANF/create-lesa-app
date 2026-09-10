@@ -16,7 +16,16 @@ One slug in — schemes, bundle ids, Android packages and a first commit out.
 
 [English](README.md) · [한국어](README.ko.md)
 
+**⚗️ Everything here is experimental. Built for me (LESA).**
+
 </div>
+
+> [!WARNING]
+> **This is mine.** It is shaped around my taste and my workflow, and every
+> choice in it is experimental. No stability, no backwards compatibility, no
+> support — the structure changes without notice.
+>
+> Read it, borrow from it. But **do not ship it as-is** — verify it yourself.
 
 <br/>
 
