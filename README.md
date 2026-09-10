@@ -1,9 +1,22 @@
-**English** · [한국어](README.ko.md)
+<div align="center">
 
 # create-lesa-app
 
-Launcher for the lesa Expo template. Asks two or three questions, derives every
-identifier from one slug, copies the template and makes the first commit.
+**Launcher for the lesa Expo template.**<br/>
+One slug in — schemes, bundle ids, Android packages and a first commit out.
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%E2%89%A520-339933?style=flat-square&logo=nodedotjs&logoColor=white)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](tsconfig.json)
+[![ink](https://img.shields.io/badge/ink-7-000000?style=flat-square&logo=react&logoColor=61DAFB)](https://github.com/vadimdemedes/ink)
+
+Generates projects on **Expo SDK 57** · React Native 0.86 · expo-router 57
+
+**English** · [한국어](README.ko.md)
+
+</div>
+
+---
 
 ```bash
 pnpm install && npm link       # once
@@ -20,10 +33,11 @@ create-lesa-app my-new-app
   └  Enter skip or continue · Esc cancel
 ```
 
-> **It does not contain the template.** It copies one from a local folder, and
-> that repository is not public yet — without a copy there is nothing to work
-> with. Lookup order: `--template <path>` → `$LESA_TEMPLATE_DIR` → a sibling
-> `lesa-expo-template` folder.
+> [!IMPORTANT]
+> **This package does not contain the template.** It copies one from a local
+> folder, and that repository is not public yet — without a copy there is
+> nothing to work with. Lookup order:
+> `--template <path>` → `$LESA_TEMPLATE_DIR` → a sibling `lesa-expo-template`.
 
 ## What one slug becomes
 
@@ -35,29 +49,41 @@ create-lesa-app my-new-app
 | version                | `0.0.1` build `1`           |                       |               |
 
 `<slug*>` drops hyphens — Android package names allow only letters, digits and
-underscores between periods, so `lesa-app` → `com.lesaapp`. URL schemes keep them.
+underscores between periods, so `lesa-app` becomes `com.lesaapp`. URL schemes
+do allow hyphens, so those keep them.
 
 A non-ASCII app name is kept as the home-screen name and a slug is asked
-separately; it is never romanized, because that value becomes the Xcode project
-name, the scheme and `PRODUCT_NAME`.
+separately. It is never romanized: that value becomes the Xcode project name,
+the scheme and `PRODUCT_NAME`, and the transliteration is lossy.
 
 ## Not asked
 
-API and OTA URLs, universal-link hosts, Android signing, icons and `firebase/`
-files — none of them are knowable at creation time. Everything the project must
-fill in is marked `TODO(앱)`, and the closing screen prints the `grep` for it.
+API and OTA URLs, universal-link hosts, Android signing, icons, `firebase/`
+files — none are knowable at creation time. Everything the project must fill in
+is marked `TODO(앱)`, and the closing screen prints the `grep` for it.
 
-## Notes
+## Good to know
 
-- Copying is driven by `git ls-files` in the template, so build output and local
-  state are excluded by definition — **a new template file must be `git add`ed
-  before it gets copied.**
-- `npm link` is tied to the current Node version (nvm); re-run after switching.
-  Or run `pnpm start ../my-new-app` from inside this repo.
-- The prompt state machine lives outside the UI (`src/flow.ts`) because
-  `useInput` needs a TTY. `pnpm test` drives the whole flow without rendering.
-- A failed run removes the directory it created. Ctrl+C leaves it alone.
+|                            |                                                                                                                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`git add` first**        | Copying is driven by `git ls-files` in the template. Build output and local state are excluded by definition — but a **new** template file must be staged before it gets copied. |
+| **`npm link` and nvm**     | The link is tied to the current Node version. Re-run after switching, or use `pnpm start ../my-new-app` from inside this repo.                                                   |
+| **Testable without a TTY** | The prompt state machine lives outside the UI (`src/flow.ts`) because `useInput` needs a TTY. `pnpm test` drives the whole flow without rendering.                               |
+| **Clean failure**          | A failed run removes the directory it created. `Ctrl+C` leaves a partial tree alone rather than deleting it silently.                                                            |
 
-`--help` · `--version` · `pnpm test` · `pnpm type-check` · `pnpm bake-intro`.
+## Commands
 
-MIT
+|                         |                                   |
+| ----------------------- | --------------------------------- |
+| `create-lesa-app <dir>` | create a project                  |
+| `--template <path>`     | point at a template explicitly    |
+| `--help` · `--version`  | usage · version                   |
+| `pnpm test`             | step-machine and derivation tests |
+| `pnpm type-check`       | `tsc --noEmit`                    |
+| `pnpm bake-intro`       | re-bake the ASCII wordmark frames |
+
+<div align="center">
+
+MIT © [LESANF](https://github.com/LESANF)
+
+</div>
