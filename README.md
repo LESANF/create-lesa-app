@@ -1,4 +1,4 @@
-<img src="assets/intro.svg" alt="LESA APPKIT" width="487">
+**English** · [한국어](README.ko.md)
 
 # create-lesa-app
 
@@ -58,7 +58,6 @@ fill in is marked `TODO(앱)`, and the closing screen prints the `grep` for it.
   `useInput` needs a TTY. `pnpm test` drives the whole flow without rendering.
 - A failed run removes the directory it created. Ctrl+C leaves it alone.
 
-`--help` · `--version` · `pnpm test` · `pnpm type-check` · `pnpm bake-intro` ·
-`pnpm bake-svg`.
+`--help` · `--version` · `pnpm test` · `pnpm type-check` · `pnpm bake-intro`.
 
 MIT
