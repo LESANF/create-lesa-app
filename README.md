@@ -22,9 +22,9 @@ initial commit.
 ```
 ◆ 01 NAME  ──  ○ 02 SLUG  ──  ○ 03 TEAM  ──  ○ 04 READY
 
-? App name         마이앱        ← any language
+? App name         레사앱        ← any language
     ├─ ASCII  →    reused as the slug, step 02 is skipped
-    └─ other  →    ? Slug          myapp
+    └─ other  →    ? Slug          lesaapp
 ? Apple Team ID  (optional, Enter to skip)
 ```
 

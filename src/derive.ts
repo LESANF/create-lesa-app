@@ -31,7 +31,7 @@ export function validateSlug(slug: string): string | null {
   if (!SLUG_PATTERN.test(slug)) {
     return 'Start with a lowercase letter; use only lowercase letters, digits and hyphens.';
   }
-  // reverse-domain 세그먼트로 들어가므로 하이픈으로 끝나면 `com.my-app-.development` 가 된다.
+  // reverse-domain 세그먼트로 들어가므로 하이픈으로 끝나면 `com.lesa-app-.development` 가 된다.
   if (slug.endsWith('-')) return 'Cannot end with a hyphen.';
   return null;
 }
