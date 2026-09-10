@@ -5,12 +5,14 @@
 **Launcher for the lesa Expo template.**<br/>
 One slug in — schemes, bundle ids, Android packages and a first commit out.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%E2%89%A520-339933?style=flat-square&logo=nodedotjs&logoColor=white)](package.json)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](tsconfig.json)
-[![ink](https://img.shields.io/badge/ink-7-000000?style=flat-square&logo=react&logoColor=61DAFB)](https://github.com/vadimdemedes/ink)
-
-Generates projects on **Expo SDK 57** · React Native 0.86 · expo-router 57
+[![Expo SDK](https://img.shields.io/badge/Expo_SDK-57-000020?style=flat-square&logo=expo&logoColor=white)](https://docs.expo.dev/versions/v57.0.0/)
+[![React Native](https://img.shields.io/badge/React_Native-0.86-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactnative.dev)
+[![expo-router](https://img.shields.io/badge/expo--router-57-000020?style=flat-square&logo=expo&logoColor=white)](https://docs.expo.dev/router/introduction/)
+[![Reanimated](https://img.shields.io/badge/Reanimated-4.5-FF6B6B?style=flat-square)](https://docs.swmansion.com/react-native-reanimated/)
+[![Uniwind](https://img.shields.io/badge/Uniwind-1.11-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white)](https://uniwind.dev)
+[![TanStack Query](https://img.shields.io/badge/TanStack_Query-5-FF4154?style=flat-square&logo=reactquery&logoColor=white)](https://tanstack.com/query)
+[![Zustand](https://img.shields.io/badge/Zustand-5-443E38?style=flat-square)](https://zustand.docs.pmnd.rs)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 
 **English** · [한국어](README.ko.md)
 
