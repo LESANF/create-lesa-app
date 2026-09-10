@@ -8,7 +8,7 @@
  */
 
 import { Box, render, Text, useApp, useStdout } from 'ink';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -21,19 +21,42 @@ import { Frame, Prompt, railColors as colors, Section, Steps } from './ui.tsx';
 import type { CreateProgress, CreateResult } from './create.ts';
 import type { PromptResult } from './ui.tsx';
 
+const USAGE = `create-lesa-app — create a project from the lesa Expo template
+
+  create-lesa-app <dir> [options]
+
+Options
+  --template <path>   template directory (else $LESA_TEMPLATE_DIR, else a
+                      sibling "lesa-expo-template" folder)
+  -h, --help          show this
+  -v, --version       print the version
+
+It asks for an app name, a slug when the name is not lowercase ASCII, and an
+optional Apple Team ID, then copies the template's git-tracked files, fills in
+env-candidates.ts and makes the first commit.`;
+
+class ArgError extends Error {}
+
 function parseArgs(argv: string[]) {
   const rest = argv.slice(2);
   let templateDir = process.env.LESA_TEMPLATE_DIR ?? '';
   const positional: string[] = [];
 
   for (let index = 0; index < rest.length; index++) {
-    if (rest[index] === '--template') {
+    const arg = rest[index];
+    if (arg === '--help' || arg === '-h') return { help: true };
+    if (arg === '--version' || arg === '-v') return { version: true };
+    if (arg === '--template') {
       templateDir = rest[++index] ?? '';
+      if (!templateDir) throw new ArgError('--template needs a path');
       continue;
     }
-    positional.push(rest[index]);
+    // 알 수 없는 플래그를 위치 인자로 삼으면 오타가 디렉터리 이름이 된다.
+    if (arg.startsWith('-')) throw new ArgError(`unknown option: ${arg}`);
+    positional.push(arg);
   }
 
+  if (positional.length > 1) throw new ArgError(`unexpected argument: ${positional[1]}`);
   return { targetDir: positional[0] ?? '', templateDir };
 }
 
@@ -153,10 +176,27 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
   );
 }
 
-const args = parseArgs(process.argv);
+let args: ReturnType<typeof parseArgs>;
+try {
+  args = parseArgs(process.argv);
+} catch (error) {
+  console.error(`${error instanceof Error ? error.message : String(error)}\n\n${USAGE}`);
+  process.exit(1);
+}
 
+if (args.help) {
+  console.log(USAGE);
+  process.exit(0);
+}
+if (args.version) {
+  const pkg = JSON.parse(readFileSync(path.join(packageRoot, 'package.json'), 'utf8')) as {
+    version: string;
+  };
+  console.log(pkg.version);
+  process.exit(0);
+}
 if (!args.targetDir) {
-  console.error('Usage: create-lesa-app <dir> [--template <path>]');
+  console.error(USAGE);
   process.exit(1);
 }
 

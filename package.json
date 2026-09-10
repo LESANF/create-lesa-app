@@ -28,6 +28,18 @@
   "files": [
     "bin",
     "src",
-    "README.md"
-  ]
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LESANF/create-lesa-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LESANF/create-lesa-app/issues"
+  },
+  "homepage": "https://github.com/LESANF/create-lesa-app#readme",
+  "engines": {
+    "node": ">=20"
+  }
 }
