@@ -1,9 +1,6 @@
 /**
  * 로컬 템플릿 폴더 → 대상 디렉터리 복사.
  *
- * 템플릿 레포가 private 이라 tarball 을 쓸 수 없다(사유: 템플릿 `docs/cli.md`).
- * 배포 방식이 정해지면 이 파일만 교체한다 — 다른 모듈은 `copyTemplate` 시그니처만 안다.
- *
  * **복사 대상 = git 이 추적하는 파일.** 제외 목록을 손으로 들고 있으면 템플릿에 새 gitignore
  * 항목이 생길 때마다 놓친다(실제로 `.pnpm-store`·`expo-env.d.ts`·`npmlogin.log` 를 놓쳤다).
  * `git ls-files` 는 산출물·로컬 상태를 정의상 제외한다.

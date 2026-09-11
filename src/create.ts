@@ -12,6 +12,7 @@ import { applyEnvCandidates, applyEnvFile } from './apply.ts';
 import { assertEmptyTarget, copyTemplate } from './copy.ts';
 import { derive } from './derive.ts';
 import { fetchTemplate } from './fetch-template.ts';
+import { pruneRepoOnly } from './repo-only.ts';
 
 import type { AppInput } from './derive.ts';
 
@@ -52,6 +53,13 @@ export type CreateResult = {
   /** 끝난 뒤 무엇이 됐는지 보여주는 영수증 — 생성이 300ms 라 진행 표시는 스쳐 지나간다. */
   receipt: { fileCount: number; wroteEnvFile: boolean; source: 'local' | 'github' };
 };
+
+async function countTracked(dir: string): Promise<number> {
+  const { stdout } = await run('git', ['-C', dir, 'ls-files', '-z'], {
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  return stdout.split('\0').filter(Boolean).length;
+}
 
 async function gitInit(dir: string): Promise<void> {
   await run('git', ['-C', dir, 'init', '-q']);
@@ -95,6 +103,7 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
       await fetchTemplate(targetDir, message => step({ index: 0, note: message }));
     }
     copied = true;
+    await pruneRepoOnly(targetDir, { displayName, slug });
 
     step({ index: 1 });
     await applyEnvCandidates(targetDir, fields);
@@ -104,6 +113,8 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
 
     step({ index: 3 });
     await gitInit(targetDir);
+    // 추적 파일 수가 유일한 정답이다 — 원격 경로는 복사 콜백이 없고, prune 이 3개를 뺀다.
+    fileCount = await countTracked(targetDir);
     step({ index: CREATE_STEPS.length });
   } catch (error) {
     if (copied) {
