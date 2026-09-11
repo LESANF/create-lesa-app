@@ -8,9 +8,9 @@
 
 ## [Unreleased]
 
-## [0.1.0] — 2026-09-11
+## [0.0.1] — 2026-09-11
 
-첫 공개 릴리즈. **PoC** 다 — `0.x` 는 안정성을 약속하지 않는다.
+첫 공개 릴리즈. **PoC** 다 — `0.0.x` 는 안정성을 약속하지 않는다.
 
 ### Added
 
@@ -26,5 +26,5 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.1.0
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.0.1

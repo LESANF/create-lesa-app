@@ -17,7 +17,7 @@ const run = promisify(execFile);
 
 export const TEMPLATE_REPO = 'LESANF/react-native-template-lesa';
 /** 템플릿을 릴리즈하면 이 값을 올린다. */
-export const TEMPLATE_REF = 'v0.1.0';
+export const TEMPLATE_REF = 'v0.0.1';
 
 export class FetchError extends Error {}
 

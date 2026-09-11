@@ -1,6 +1,6 @@
 {
   "name": "create-lesa-app",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Create a new project from the lesa Expo SDK 57 template",
   "scripts": {
     "start": "tsx src/index.tsx",
