@@ -29,8 +29,7 @@ slug 하나만 주면 스킴·번들 ID·Android 패키지·첫 커밋까지 나
 <br/>
 
 ```bash
-pnpm install && npm link
-create-lesa-app my-new-app
+npx create-lesa-app my-new-app
 ```
 
 ```
@@ -51,9 +50,12 @@ create-lesa-app my-new-app
   └  Enter skip or continue · Esc cancel
 ```
 
-> [!IMPORTANT]
-> **템플릿은 이 패키지에 없다.** 로컬 폴더에서 복사하고, 그 레포는 아직 공개 전이다.
-> 찾는 순서는 `--template <path>` → `$LESA_TEMPLATE_DIR` → 형제 `lesa-expo-template`.
+> [!NOTE]
+> 템플릿은
+> [`LESANF/react-native-template-lesa`](https://github.com/LESANF/react-native-template-lesa)
+> 의 고정 태그에서 받는다 — 오늘과 내일 같은 명령이 같은 프로젝트를 만든다.
+> 로컬 사본이 있으면 그걸 쓴다. 순서는
+> `--template <path>` → `$LESA_TEMPLATE_DIR` → 형제 `lesa-expo-template` → GitHub.
 
 <br/>
 

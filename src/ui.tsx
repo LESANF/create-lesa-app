@@ -187,6 +187,7 @@ export function Steps({
   current,
   details,
   labels,
+  note,
   progress,
   skipped,
 }: {
@@ -194,6 +195,8 @@ export function Steps({
   /** 끝난 단계 옆에 붙는 설명 — `216 files` 처럼. */
   details?: Record<number, string>;
   labels: readonly string[];
+  /** 진행 중인 단계의 세부 — 총계를 모르는 원격 다운로드 등. */
+  note?: string;
   progress?: { done: number; total: number };
   skipped: Set<number>;
 }) {
@@ -223,6 +226,8 @@ export function Steps({
             </Text>
             {state === 'now' && progress ? (
               <Progress done={progress.done} total={progress.total} />
+            ) : state === 'now' && note ? (
+              <Text color={colors.faint}>{`  ${note}`}</Text>
             ) : null}
           </React.Fragment>
         );

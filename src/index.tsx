@@ -67,7 +67,10 @@ function looksLikeTemplate(dir: string): boolean {
   return existsSync(path.join(dir, 'env-candidates.ts')) && existsSync(path.join(dir, 'app.config.ts'));
 }
 
-/** `--template` → `LESA_TEMPLATE_DIR` → 형제 `lesa-expo-template`. */
+/**
+ * `--template` → `$LESA_TEMPLATE_DIR` → 형제 `lesa-expo-template` → 빈 문자열(= GitHub).
+ * 빈 문자열은 실패가 아니다 — `create.ts` 가 tarball 을 받는다.
+ */
 function resolveTemplateDir(explicit: string): string {
   if (explicit) return path.resolve(explicit);
   const sibling = path.resolve(packageRoot, '../lesa-expo-template');
@@ -138,6 +141,7 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
           <Steps
             current={stage.progress.index}
             labels={CREATE_STEPS}
+            note={stage.progress.note}
             progress={
               stage.progress.total
                 ? { done: stage.progress.done ?? 0, total: stage.progress.total }
@@ -156,7 +160,10 @@ function App({ targetDir, templateDir }: { targetDir: string; templateDir: strin
           <Steps
             current={CREATE_STEPS.length}
             details={{
-              0: `${stage.result.receipt.fileCount} files`,
+              0:
+                stage.result.receipt.source === 'github'
+                  ? 'from GitHub'
+                  : `${stage.result.receipt.fileCount} files`,
               1: 'identity substituted',
               3: '1 commit',
             }}
@@ -201,12 +208,5 @@ if (!args.targetDir) {
 }
 
 const templateDir = resolveTemplateDir(args.templateDir);
-if (!templateDir) {
-  console.error(
-    'Could not find the template. Pass --template <path>, set LESA_TEMPLATE_DIR,\n' +
-      `or put lesa-expo-template next to ${packageRoot}`,
-  );
-  process.exit(1);
-}
 
 render(<App targetDir={path.resolve(args.targetDir)} templateDir={templateDir} />);

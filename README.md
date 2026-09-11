@@ -52,10 +52,12 @@ create-lesa-app my-new-app
   └  Enter skip or continue · Esc cancel
 ```
 
-> [!IMPORTANT]
-> **The template is not bundled.** This CLI copies one from a local folder, and
-> that repository is not public yet. Lookup order:
-> `--template <path>` → `$LESA_TEMPLATE_DIR` → a sibling `lesa-expo-template`.
+> [!NOTE]
+> The template is fetched from
+> [`LESANF/react-native-template-lesa`](https://github.com/LESANF/react-native-template-lesa)
+> at a pinned tag, so the same command gives the same project tomorrow.
+> A local copy wins when present — lookup order is
+> `--template <path>` → `$LESA_TEMPLATE_DIR` → a sibling `lesa-expo-template` → GitHub.
 
 <br/>
 
