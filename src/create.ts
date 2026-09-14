@@ -12,6 +12,7 @@ import { applyEnvCandidates, applyEnvFile } from './apply.ts';
 import { assertEmptyTarget, copyTemplate } from './copy.ts';
 import { derive } from './derive.ts';
 import { fetchTemplate } from './fetch-template.ts';
+import { applyIdentity } from './identity.ts';
 import { pruneRepoOnly } from './repo-only.ts';
 
 import type { AppInput } from './derive.ts';
@@ -104,6 +105,7 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
     }
     copied = true;
     await pruneRepoOnly(targetDir, { displayName, slug });
+    await applyIdentity(targetDir, slug);
 
     step({ index: 1 });
     await applyEnvCandidates(targetDir, fields);
