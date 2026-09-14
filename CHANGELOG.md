@@ -8,6 +8,42 @@
 
 ## [Unreleased]
 
+## [0.0.2] — 2026-09-14
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.2` 로 올린다(`TEMPLATE_REF`)
+
+### Fixed
+
+- 번역된 README(`README.ko.md`)가 생성된 앱에 그대로 복사됐다. 이름 목록이 아니라
+  패턴으로 걸러 `README.<lang>.md` 를 전부 제외한다
+
+- Java 예약어를 slug 으로 받아들여 `com.class.development` 같은 패키지를 만들었다.
+  Android 가 그 이름으로 Java 를 생성하므로 Gradle 이 깨지고, 에러는 한참 뒤
+  빌드에서 난다. 이제 입력 시점에 거부한다 — 검사는 하이픈을 뺀 세그먼트 기준이라
+  `gym-class` 는 통과한다
+
+- 표시 이름에 작은따옴표가 있으면(`Dev's App`) `env-candidates.ts` 가 문법적으로
+  깨진 채 커밋됐다. 역슬래시는 escape 로 먹혀 조용히 사라졌고, 줄바꿈은 파일을
+  깼다. 이제 리터럴에 맞게 escape 한다
+
+- 완료 안내가 없어진 문서 절(`README "Make it yours" §3`)을 가리키고 있었다 —
+  생성된 앱의 README 를 짧은 것으로 바꾸면서 그 절이 사라졌다. 이제 교체할 파일
+  이름을 직접 말한다
+
+### Changed
+
+- 생성된 앱이 자기 정체를 갖는다 — `package.json` 의 `name` 을 slug 로, `version` 을
+  `1.0.0` 으로 두고 템플릿 `license` 를 지운다. 스토어 버전인
+  `env-candidates.ts` 의 `version.app` 도 같이 맞춘다
+
+- 템플릿 레포 전용 파일(`CHANGELOG.md`·`LICENSE`·`README.md`)은 생성된 앱에 복사하지
+  않는다. 대신 앱 이름으로 짧은 `README.md` 를 새로 쓴다. `AGENTS.md`·`docs/` 는
+  앱과 같이 가는 게 목적이라 그대로 둔다
+- `receipt.fileCount` 를 초기 커밋의 추적 파일 수로 센다 — 원격 경로는 복사 콜백이
+  없어서 0 으로 찍히고 있었다
+
 ## [0.0.1] — 2026-09-11
 
 첫 공개 릴리즈. **PoC** 다 — `0.0.x` 는 안정성을 약속하지 않는다.
@@ -26,5 +62,6 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.0.1

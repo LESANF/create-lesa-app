@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 
-import { derive } from './derive.ts';
-import { advance, editingField, initialFlow, setField, stepOrder, toInput } from './flow.ts';
+import { derive, validateSlug } from './derive.ts';
+import {
+  advance,
+  editingField,
+  initialFlow,
+  isUsableAsSlug,
+  setField,
+  stepOrder,
+  toInput,
+} from './flow.ts';
 
 /** 타이핑 시뮬레이션: 문자열을 넣고 Enter. */
 function type(state, text) {
@@ -96,3 +104,17 @@ console.log('flow: 7/7 groups pass');
 }
 
 console.log('derive: hyphen slug produces a valid Android package');
+
+// 9) Java 예약어 — 패키지 세그먼트로 들어가면 Gradle 이 깬다
+{
+  for (const slug of ['class', 'new', 'int', 'true', 'cl-ass']) {
+    assert.match(validateSlug(slug) ?? '', /Java keyword/, `${slug} must be rejected`);
+  }
+  for (const slug of ['gym-class', 'classroom', 'gym-log']) {
+    assert.equal(validateSlug(slug), null, `${slug} must be accepted`);
+  }
+  // 이름 스텝도 같은 검사를 탄다 — 통과하지 못하면 slug 을 따로 묻는다
+  assert.equal(isUsableAsSlug('class'), false);
+}
+
+console.log('derive: Java keywords are rejected as package segments');
