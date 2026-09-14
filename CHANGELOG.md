@@ -10,6 +10,9 @@
 
 ### Fixed
 
+- 번역된 README(`README.ko.md`)가 생성된 앱에 그대로 복사됐다. 이름 목록이 아니라
+  패턴으로 걸러 `README.<lang>.md` 를 전부 제외한다
+
 - Java 예약어를 slug 으로 받아들여 `com.class.development` 같은 패키지를 만들었다.
   Android 가 그 이름으로 Java 를 생성하므로 Gradle 이 깨지고, 에러는 한참 뒤
   빌드에서 난다. 이제 입력 시점에 거부한다 — 검사는 하이픈을 뺀 세그먼트 기준이라
