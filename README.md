@@ -5,6 +5,10 @@
 Launcher for the lesa Expo template.<br/>
 One slug in — schemes, bundle ids, Android packages and a first commit out.
 
+[![npm](https://img.shields.io/npm/v/create-lesa-app?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/create-lesa-app)
+[![downloads](https://img.shields.io/npm/dm/create-lesa-app?style=flat-square&color=CB3837)](https://www.npmjs.com/package/create-lesa-app)
+[![license](https://img.shields.io/github/license/LESANF/create-lesa-app?style=flat-square)](./LICENSE)
+
 [![Expo SDK](https://img.shields.io/badge/Expo_SDK-57-000020?style=flat-square&logo=expo&logoColor=white)](https://docs.expo.dev/versions/v57.0.0/)
 [![React Native](https://img.shields.io/badge/React_Native-0.86-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactnative.dev)
 [![expo-router](https://img.shields.io/badge/expo--router-57-000020?style=flat-square&logo=expo&logoColor=white)](https://docs.expo.dev/router/introduction/)
