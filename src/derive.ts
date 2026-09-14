@@ -25,6 +25,20 @@ export type DerivedFields = {
 
 export const SLUG_PATTERN = /^[a-z][a-z0-9-]*$/;
 
+/**
+ * Java 예약어는 패키지 세그먼트로 못 쓴다 — `com.class.development` 은 Gradle 에서
+ * 깨진다. Android 가 이 이름으로 Java 를 생성하기 때문이고, 에러는 한참 뒤 빌드에서 난다.
+ */
+const JAVA_RESERVED = new Set([
+  'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char',
+  'class', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum',
+  'extends', 'false', 'final', 'finally', 'float', 'for', 'goto', 'if',
+  'implements', 'import', 'instanceof', 'int', 'interface', 'long', 'native',
+  'new', 'null', 'package', 'private', 'protected', 'public', 'return',
+  'short', 'static', 'strictfp', 'super', 'switch', 'synchronized', 'this',
+  'throw', 'throws', 'transient', 'true', 'try', 'void', 'volatile', 'while',
+]);
+
 /** 입력 검증 — 통과하지 못하면 이유를 돌려준다(호출부가 다시 묻는다). */
 export function validateSlug(slug: string): string | null {
   if (!slug) return 'Enter a slug.';
@@ -33,6 +47,11 @@ export function validateSlug(slug: string): string | null {
   }
   // reverse-domain 세그먼트로 들어가므로 하이픈으로 끝나면 `com.lesa-app-.development` 가 된다.
   if (slug.endsWith('-')) return 'Cannot end with a hyphen.';
+  // 패키지 세그먼트는 하이픈을 뺀 형태다 — `gym-class` 는 `gymclass` 라 괜찮다.
+  const segment = slug.replaceAll('-', '');
+  if (JAVA_RESERVED.has(segment)) {
+    return `"${segment}" is a Java keyword and cannot be an Android package segment.`;
+  }
   return null;
 }
 

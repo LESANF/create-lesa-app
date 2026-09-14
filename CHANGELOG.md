@@ -10,6 +10,11 @@
 
 ### Fixed
 
+- Java 예약어를 slug 으로 받아들여 `com.class.development` 같은 패키지를 만들었다.
+  Android 가 그 이름으로 Java 를 생성하므로 Gradle 이 깨지고, 에러는 한참 뒤
+  빌드에서 난다. 이제 입력 시점에 거부한다 — 검사는 하이픈을 뺀 세그먼트 기준이라
+  `gym-class` 는 통과한다
+
 - 표시 이름에 작은따옴표가 있으면(`Dev's App`) `env-candidates.ts` 가 문법적으로
   깨진 채 커밋됐다. 역슬래시는 escape 로 먹혀 조용히 사라졌고, 줄바꿈은 파일을
   깼다. 이제 리터럴에 맞게 escape 한다
