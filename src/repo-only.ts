@@ -3,7 +3,7 @@
  * `AGENTS.md`·`docs/` 는 앱과 같이 가는 게 목적이라 여기 없다.
  */
 
-import { rm, writeFile } from 'node:fs/promises';
+import { readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const REPO_ONLY = [
@@ -12,14 +12,17 @@ const REPO_ONLY = [
   'README.md', // "MVP 라 사용을 권하지 않습니다" — 아래에서 새로 쓴다
 ];
 
+/** 번역된 README — `README.ko.md` 처럼 언어 코드가 붙은 것들. */
+const LOCALIZED_README = /^README\.[a-z]{2}(-[A-Z]{2})?\.md$/;
+
 /** 레포 전용 파일을 지우고 앱 README 를 새로 쓴다. 복사·추출 어느 경로든 뒤에 한 번 돈다. */
 export async function pruneRepoOnly(
   targetDir: string,
   app: { displayName: string; slug: string }
 ): Promise<void> {
-  await Promise.all(
-    REPO_ONLY.map(name => rm(path.join(targetDir, name), { force: true }))
-  );
+  const entries = await readdir(targetDir);
+  const remove = [...REPO_ONLY, ...entries.filter(name => LOCALIZED_README.test(name))];
+  await Promise.all(remove.map(name => rm(path.join(targetDir, name), { force: true })));
 
   const title = app.displayName || app.slug;
   await writeFile(
