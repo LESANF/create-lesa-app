@@ -33,6 +33,17 @@ const LEFTOVER = /write[-.]your/;
 export class ApplyError extends Error {}
 
 /** `env-candidates.ts` 치환. displayName 은 자리표시가 아니라 빈 문자열이라 따로 넣는다. */
+/**
+ * 작은따옴표 문자열 리터럴에 넣을 수 있게 escape 한다. `Dev's App` 같은 이름이
+ * 그대로 들어가면 `env-candidates.ts` 가 문법적으로 깨진다.
+ */
+function escapeSingleQuoted(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r\n?|\n/g, '\\n');
+}
+
 export async function applyEnvCandidates(
   projectDir: string,
   fields: DerivedFields
@@ -51,7 +62,10 @@ export async function applyEnvCandidates(
 
   if (fields.displayName) {
     const before = source;
-    source = source.replace("displayName: '',", `displayName: '${fields.displayName}',`);
+    source = source.replace(
+      "displayName: '',",
+      `displayName: '${escapeSingleQuoted(fields.displayName)}',`
+    );
     if (source === before) {
       throw new ApplyError("Could not find the displayName slot (`displayName: '',`).");
     }
