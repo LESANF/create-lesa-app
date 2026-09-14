@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- 완료 안내가 없어진 문서 절(`README "Make it yours" §3`)을 가리키고 있었다 —
+  생성된 앱의 README 를 짧은 것으로 바꾸면서 그 절이 사라졌다. 이제 교체할 파일
+  이름을 직접 말한다
+
 ### Changed
 
 - 생성된 앱이 자기 정체를 갖는다 — `package.json` 의 `name` 을 slug 로, `version` 을

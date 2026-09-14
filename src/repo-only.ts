@@ -29,6 +29,7 @@ export async function pruneRepoOnly(
       'pnpm install\n' +
       'pnpm ios:development   # or pnpm android:development\n' +
       '```\n\n' +
+      '아이콘·스플래시는 `assets/images/` 의 `icon.png`·`adaptive-icon.png`·`splash-icon.png` 를 교체합니다.\n\n' +
       '작업 규칙과 메커니즘은 [`AGENTS.md`](./AGENTS.md), 영역별 문서는 [`docs/`](./docs) 에 있습니다.\n',
     'utf8'
   );
