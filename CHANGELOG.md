@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+## [0.0.2] — 2026-09-14
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.2` 로 올린다(`TEMPLATE_REF`)
+
 ### Fixed
 
 - 번역된 README(`README.ko.md`)가 생성된 앱에 그대로 복사됐다. 이름 목록이 아니라
@@ -56,5 +62,6 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.0.1
