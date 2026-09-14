@@ -136,7 +136,7 @@ export async function createApp(options: CreateOptions): Promise<CreateResult> {
     nextSteps: [
       `cd ${name} && pnpm install`,
       'pnpm ios:development   (or pnpm android:development)',
-      'Replace the icon and splash in assets/ — README "Make it yours" §3',
+      'Replace assets/images/icon.png · adaptive-icon.png · splash-icon.png',
       'Drop your config files into firebase/ to turn push on — docs/push.md',
       'grep -rn "TODO(앱)" src   — the spots your project fills in',
     ],
