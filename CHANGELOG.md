@@ -8,6 +8,14 @@
 
 ## [Unreleased]
 
+## [0.0.4] — 2026-09-15
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.4` 로 올린다(`TEMPLATE_REF`). **iOS 27 SDK 에서 앱이 실행되지
+  않던 문제(UIScene 생명주기)가 고쳐진 버전**이다 — 그 전 템플릿은 빌드는 되고 실행이
+  안 된다. 앱 아이콘 배지 위치도 같이 들어간다
+
 ## [0.0.3] — 2026-09-15
 
 ### Changed
@@ -69,7 +77,8 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.0.1
