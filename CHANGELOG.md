@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+## [0.0.5] — 2026-09-15
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.5` 로 올린다(`TEMPLATE_REF`). iOS 27 UIScene 수정과 Android
+  adaptive 아이콘 foreground 가 새 프로젝트에 들어간다
+
 ## [0.0.4] — 2026-09-15
 
 ### Changed
@@ -77,7 +84,8 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...v0.0.2
