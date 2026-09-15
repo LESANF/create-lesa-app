@@ -1,0 +1,31 @@
+# PR 에서 타입 체크와 스텝 머신 테스트를 돌린다.
+# 생성 자체는 돌리지 않는다 — GitHub tarball 을 받아야 해서 태그에 의존한다.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run type-check
+
+      - run: pnpm test
