@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+## [0.0.3] — 2026-09-15
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.3` 으로 올린다(`TEMPLATE_REF`). 프리로더 콜백 격리·딥링크
+  인코딩·Android 서명 앵커·auth 로그인 라우트가 새 프로젝트에 들어간다
+
 ## [0.0.2] — 2026-09-14
 
 ### Changed
@@ -62,6 +69,7 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/LESANF/create-lesa-app/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/LESANF/create-lesa-app/releases/tag/v0.0.1
