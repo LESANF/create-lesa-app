@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- `scripts/release-check.mjs` 와 `release:check` 스크립트를 생성된 앱에서 제외한다 —
+  템플릿·CLI·npm 체인을 검사하는 것이라 앱과 무관하다. `MIGRATION.md` 는 남긴다(앱이
+  템플릿을 올릴 때 읽는다)
+
 ## [0.0.7] — 2026-09-16
 
 ### Changed
