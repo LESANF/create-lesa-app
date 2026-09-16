@@ -8,6 +8,18 @@
 
 ## [Unreleased]
 
+## [0.0.8] — 2026-09-16
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.8` 으로 올린다(`TEMPLATE_REF`) — `MIGRATION.md` 가 들어간다
+
+### Fixed
+
+- `scripts/release-check.mjs` 와 `release:check` 스크립트를 생성된 앱에서 제외한다 —
+  템플릿·CLI·npm 체인을 검사하는 것이라 앱과 무관하다. `MIGRATION.md` 는 남긴다(앱이
+  템플릿을 올릴 때 읽는다)
+
 ## [0.0.7] — 2026-09-16
 
 ### Changed
@@ -99,7 +111,8 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.7...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/LESANF/create-lesa-app/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/LESANF/create-lesa-app/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...v0.0.5
