@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+## [0.0.7] — 2026-09-16
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.7` 으로 올린다(`TEMPLATE_REF`). `v0.0.6` 은 **푸시를 켜면
+  prebuild 가 실패한다** — `expo-build-properties` 를 57.0.20 으로 올려 해소한 버전이다
+
 ## [0.0.6] — 2026-09-16
 
 ### Changed
@@ -92,7 +99,8 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.6...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/LESANF/create-lesa-app/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...v0.0.4
