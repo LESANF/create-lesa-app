@@ -8,6 +8,14 @@
 
 ## [Unreleased]
 
+## [0.0.6] — 2026-09-16
+
+### Changed
+
+- 받아오는 템플릿을 `v0.0.6` 으로 올린다(`TEMPLATE_REF`). iOS 27 UIScene 이 손수 만든
+  패치·플러그인에서 **공식 스위치**(`expo-build-properties` 의 `ios.enableSceneSupport`)로
+  바뀌었다 — 생성되는 프로젝트에 패치가 하나도 없다
+
 ## [0.0.5] — 2026-09-15
 
 ### Changed
@@ -84,7 +92,8 @@
 
 ---
 
-[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...HEAD
+[unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/LESANF/create-lesa-app/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/LESANF/create-lesa-app/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/LESANF/create-lesa-app/compare/v0.0.2...v0.0.3
