@@ -8,8 +8,11 @@
 
 ## [Unreleased]
 
+## [0.0.9] — 2026-09-17
+
 ### Changed
 
+- `TEMPLATE_REF` → `v0.0.9`. iOS NSE(푸시 게이트 안), pnpm 하한, 낡은 문서 제거
 - `docs/template-completion.md` 를 생성 프로젝트에 복사하지 않는다(`REPO_ONLY`). 템플릿 레포의
   진행 기록이라 받는 쪽엔 소음이었다
 
@@ -117,6 +120,7 @@
 ---
 
 [unreleased]: https://github.com/LESANF/create-lesa-app/compare/v0.0.8...HEAD
+[0.0.9]: https://github.com/LESANF/create-lesa-app/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/LESANF/create-lesa-app/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/LESANF/create-lesa-app/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/LESANF/create-lesa-app/compare/v0.0.5...v0.0.6
