@@ -8,6 +8,7 @@ import path from 'node:path';
 
 const REPO_ONLY = [
   'CHANGELOG.md', // 템플릿의 릴리즈 이력
+  'docs/template-completion.md', // 템플릿 레포의 진행 기록
   'LICENSE', // 템플릿 저작권 — 앱은 자기 것을 고른다
   'README.md', // "MVP 라 사용을 권하지 않습니다" — 아래에서 새로 쓴다
   'scripts/release-check.mjs', // 템플릿·CLI·npm 체인 검사 — 앱과 무관하다
