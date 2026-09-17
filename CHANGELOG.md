@@ -8,6 +8,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `docs/template-completion.md` 를 생성 프로젝트에 복사하지 않는다(`REPO_ONLY`). 템플릿 레포의
+  진행 기록이라 받는 쪽엔 소음이었다
+
 ## [0.0.8] — 2026-09-16
 
 ### Changed
