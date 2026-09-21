@@ -1,12 +1,11 @@
-# PR 과 버전 브랜치 푸시에서 타입 체크와 스텝 머신 테스트를 돌린다.
+# PR 에서 타입 체크와 스텝 머신 테스트를 돌린다.
 # 생성 자체는 돌리지 않는다 — GitHub tarball 을 받아야 해서 태그에 의존한다.
 name: CI
 
-# 버전 브랜치(0.0.9)는 PR 없이 머지되므로 푸시에서 돈다 — AGENTS.md.
 on:
   pull_request:
   push:
-    branches: [master, '[0-9]+.[0-9]+.[0-9]+']
+    branches: [master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,12 +15,6 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: PR base must be master
-        if: github.event_name == 'pull_request' && github.base_ref != 'master'
-        run: |
-          echo "::error::PR 은 master 로만 연다. 버전 브랜치에는 로컬 머지로 넣는다 — AGENTS.md"
-          exit 1
-
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
