@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **PR 은 `master` 로만 연다.** 피쳐는 버전 브랜치에 로컬 머지로 넣고, 릴리즈는 master 머지가 아니라
+  태그와 `npm publish` 다. CI 가 버전 브랜치 푸시에서 돌고 `master` 가 아닌 PR 은 실패시킨다.
+  규칙은 새 `AGENTS.md` 에 있다(npm 패키지에는 들어가지 않는다)
+
 ## [0.0.9] — 2026-09-17
 
 ### Changed
