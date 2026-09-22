@@ -8,6 +8,14 @@
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-09-22
+
+### Changed
+
+- `TEMPLATE_REF` → `v0.1.0`. 원시색·의미 토큰 분리와 `useColors()`, Input 구조, Button 동작, Icon 바탕,
+  밑줄·취소선, 키보드·디바운스 훅, 모션 상수, dayjs·표기 유틸, `../` import 금지, 색 가드레일 테스트.
+  이미 만든 앱은 템플릿 `MIGRATION.md` "v0.0.9 에서 올리기"
+
 ### Docs
 
 - `AGENTS.md` — 에이전트용 브랜치·릴리즈 규칙. npm 패키지에는 들어가지 않는다
