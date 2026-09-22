@@ -23,7 +23,7 @@
   },
   "type": "module",
   "bin": {
-    "create-lesa-app": "./bin/create-lesa-app.mjs"
+    "create-lesa-app": "bin/create-lesa-app.mjs"
   },
   "files": [
     "CHANGELOG.md",
