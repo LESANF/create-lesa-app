@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+## [0.0.12] — 2026-09-28
+
+### Changed
+
+- `TEMPLATE_REF` → `v0.0.12`. RN 인스펙터 Touchables 패치, Expo SDK 57 패치 버전 정렬
+
 ## [0.0.11] — 2026-09-22
 
 ### Changed
