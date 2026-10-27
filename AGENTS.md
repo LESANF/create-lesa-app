@@ -10,6 +10,7 @@
   OTP 는 사용자가 친다.
 - **머지는 항상 merge commit**(`gh pr merge --merge`). squash 는 `Co-Authored-By` 를 뭉갠다.
 - **`master` 에 직접 푸시하지 않는다.** 버전 브랜치는 릴리즈 후에도 남긴다.
+- **커밋 작성자 메일은 `nagong1000@naver.com`(GitHub 계정에 연결된 메일)이어야 한다.** 다른 메일(회사 메일 등)로 만든 커밋은 GitHub 이 계정에 귀속시키지 않아 achievements 에 집계되지 않는다. 세션 시작 시 `git config user.email` 을 확인하고, 아니면 `git config user.email nagong1000@naver.com` 뒤에 커밋한다.
 - **`src/fetch-template.ts` 의 `TEMPLATE_REF` 는 태그다.** 템플릿을 릴리즈하면 같이 올리고
   템플릿 레포에서 `pnpm release:check` 로 확인한다.
 - 커밋은 Conventional Commits, 공개 레포라 영어로 쓴다.
