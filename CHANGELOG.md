@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+## [0.0.13] — 2026-10-27
+
+### Changed
+
+- `TEMPLATE_REF` → `v0.1.0`. 템플릿이 Expo SDK 58 / RN 0.88 로 올라갔다(iPhone Duo safe area, RNFB 27, hot-updater v1)
+
 ## [0.0.12] — 2026-09-28
 
 ### Changed
