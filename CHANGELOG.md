@@ -8,6 +8,12 @@
 
 ## [Unreleased]
 
+## [0.0.15] — 2026-11-09
+
+### Changed
+
+- `TEMPLATE_REF` → `v0.0.14`. 템플릿 SDK 58 패치 릴리즈(RN 0.88.1), 서드파티 패치 제거, 임시 RN 산출물 미러(`ENTERPRISE_REPOSITORY`)
+
 ## [0.0.14] — 2026-10-27
 
 ### Changed
